@@ -31,7 +31,7 @@ const words = {
     address: "Адреса гаманця",
     copy: "Копіювати адресу",
     copied: "Скопійовано!",
-    paid: "Надіслати заявку",
+    paid: "Підтвердити оплату",
     demo: "Переказ USDT у мережі TON",
     note: "Скопіюйте адресу гаманця, надішліть USDT у мережі TON, поверніться в додаток і підтвердіть оплату.",
     sending: "Надсилання...",
@@ -52,7 +52,7 @@ const words = {
     address: "Адрес кошелька",
     copy: "Копировать адрес",
     copied: "Скопировано!",
-    paid: "Отправить заявку",
+    paid: "Подтвердить оплату",
     demo: "Перевод USDT в сети TON",
     note: "Скопируйте адрес кошелька, отправьте USDT в сети TON, вернитесь в приложение и подтвердите оплату.",
     sending: "Отправка...",
@@ -73,7 +73,7 @@ const words = {
     address: "Wallet address",
     copy: "Copy address",
     copied: "Copied!",
-    paid: "Send request",
+    paid: "Confirm payment",
     demo: "USDT transfer on TON network",
     note: "Copy the wallet address, send USDT on the TON network, return to the app, and confirm the payment.",
     sending: "Sending...",
@@ -283,13 +283,15 @@ export default function App() {
             ← {t.back}
           </button>
           <h1>{t.payment}</h1>
-          <p className="muted">{t.choose}</p>
           <div className="details-card payment-details">
             <div className="demo-label">{t.demo}</div>
             <h2>USDT</h2>
             <div className="amount-label">{t.amount}</div>
             <div className="amount-value">
               {money(selected.usd)} USDT
+            </div>
+            <div className="network-notice">
+              <span>✓</span> {t.choose}
             </div>
             <div className="address-label">{t.address}</div>
             <div className="wallet-address">

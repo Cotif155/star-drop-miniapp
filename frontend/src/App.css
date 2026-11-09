@@ -962,3 +962,29 @@ html, body {
   box-shadow: 0 3px 12px rgba(220, 35, 45, 0.15);
 }
 
+
+/* USDT TON NETWORK NOTICE */
+.network-notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 14px 12px;
+  margin: -8px 0 12px;
+  border-radius: 14px;
+  background: #e5f8eb;
+  border: 1px solid #a9e5bb;
+  color: #11783b;
+  font-size: 15px;
+  font-weight: 850;
+  line-height: 1.5;
+  text-align: center;
+  box-shadow: 0 3px 10px rgba(22, 128, 68, 0.12);
+}
+
+.network-notice span {
+  font-size: 19px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
