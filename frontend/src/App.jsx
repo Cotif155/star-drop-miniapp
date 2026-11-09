@@ -258,7 +258,7 @@ export default function App() {
 
           <button
 
-            className="primary-button large"
+            className="primary-button large continue-button"
 
             onClick={() => {
 

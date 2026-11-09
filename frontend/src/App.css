@@ -869,3 +869,9 @@ html, body {
   }
 }
 
+
+/* GREEN PULSE FOR CONTINUE BUTTON */
+.continue-button {
+  animation: green-pulse 1.8s ease-in-out infinite !important;
+}
+
