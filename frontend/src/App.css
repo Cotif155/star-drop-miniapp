@@ -937,3 +937,28 @@ html, body {
   color: #555555 !important;
 }
 
+
+/* GREEN PULSE PAYMENT BUTTONS */
+.payment-details .secondary-button,
+.payment-details .primary-button {
+  background: #168044 !important;
+  color: #ffffff !important;
+  border: none !important;
+  animation: green-pulse 1.8s ease-in-out infinite !important;
+}
+
+
+/* IMPORTANT PAYMENT INSTRUCTIONS */
+.payment-details .demo-note {
+  color: #c62828 !important;
+  font-size: 15px !important;
+  font-weight: 750 !important;
+  line-height: 1.7 !important;
+  text-align: center !important;
+  background: #fff0f0 !important;
+  border: 1px solid #ffcaca !important;
+  border-radius: 15px !important;
+  padding: 15px !important;
+  box-shadow: 0 3px 12px rgba(220, 35, 45, 0.15);
+}
+
