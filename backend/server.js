@@ -47,18 +47,25 @@ const server = createServer(async (req, res) => {
       .replace(/^@/, "")
       .slice(0, 100);
     const userId = String(order.userId || "Не отриманий").slice(0, 30);
-    const method = order.method === "USDT"
-      ? "USDT (TRC20)"
-      : "TON";
+    const prices = {
+      100: 1.95, 150: 2.93, 250: 4.88, 350: 6.83,
+      500: 9.75, 750: 14.63, 1000: 19.50,
+      1500: 29.25, 2500: 48.75, 5000: 97.50,
+      10000: 195.00, 25000: 487.50, 35000: 682.50
+    };
+
+    const price = prices[stars];
+    const method = "USDT (TON)";
     const message = [
-      "⭐ STARS DROP — ДЕМОЗАМОВЛЕННЯ",
+      "⭐ STARS DROP — НОВЕ ЗАМОВЛЕННЯ",
       "",
       "👤 Username: @" + username,
       "🆔 Telegram ID: " + userId,
       "⭐ Пакет: " + stars + " Stars",
+      "💰 Сума: " + price.toFixed(2) + " USDT",
       "💳 Спосіб оплати: " + method,
       "",
-      "⚠️ ДЕМО: оплату НЕ перевірено."
+      "🕒 Статус: Очікує перевірки оплати"
     ].join("\n");
     const telegramResponse = await fetch(
       "https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage",
