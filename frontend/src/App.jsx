@@ -1,23 +1,22 @@
 import { useState } from "react";
 import "./App.css";
 const wallets = {
-  TON: "UQCJyWTilVY1vHFWpHqCBD_DnEuBEGJ4H0itRXiqBSRg9Ozd",
   USDT: "THAawvogg5GHzfGVMZoWLSWKXQGCNxLqSY",
 };
 const packages = [
-  { stars: 100, usd: 1.95, ton: 1.46, old: 2.39 },
-  { stars: 150, usd: 2.93, ton: 2.19, old: 3.69 },
-  { stars: 250, usd: 4.88, ton: 3.65, old: 6.09 },
-  { stars: 350, usd: 6.83, ton: 5.12, old: 8.49 },
-  { stars: 500, usd: 9.75, ton: 7.31, old: 11.99 },
-  { stars: 750, usd: 14.63, ton: 10.96, old: 17.99 },
-  { stars: 1000, usd: 19.50, ton: 14.61, old: 23.99 },
-  { stars: 1500, usd: 29.25, ton: 21.93, old: 36.49 },
-  { stars: 2500, usd: 48.75, ton: 36.54, old: 60.99 },
-  { stars: 5000, usd: 97.50, ton: 73.09, old: 119 },
-  { stars: 10000, usd: 195, ton: 146.17, old: 239 },
-  { stars: 25000, usd: 487.50, ton: 365.42, old: 609 },
-  { stars: 35000, usd: 682.50, ton: 511.59, old: 849 },
+  { stars: 100, usd: 1.95, old: 2.39 },
+  { stars: 150, usd: 2.93, old: 3.69 },
+  { stars: 250, usd: 4.88, old: 6.09 },
+  { stars: 350, usd: 6.83, old: 8.49 },
+  { stars: 500, usd: 9.75, old: 11.99 },
+  { stars: 750, usd: 14.63, old: 17.99 },
+  { stars: 1000, usd: 19.50, old: 23.99 },
+  { stars: 1500, usd: 29.25, old: 36.49 },
+  { stars: 2500, usd: 48.75, old: 60.99 },
+  { stars: 5000, usd: 97.50, old: 119 },
+  { stars: 10000, usd: 195, old: 239 },
+  { stars: 25000, usd: 487.50, old: 609 },
+  { stars: 35000, usd: 682.50, old: 849 },
 ];
 const words = {
   UA: {
@@ -25,16 +24,16 @@ const words = {
     subtitle: "Обирай свій пакет Telegram Stars",
     buy: "Обрати пакет",
     continue: "Продовжити",
-    payment: "Спосіб оплати",
-    choose: "Обери спосіб оплати",
+    payment: "Оплата USDT",
+    choose: "Оплата тільки в USDT у мережі TON",
     back: "Назад",
     amount: "До оплати",
     address: "Адреса гаманця",
     copy: "Копіювати адресу",
     copied: "Скопійовано!",
     paid: "Надіслати заявку",
-    demo: "Демонстраційний режим",
-    note: "Скопіюйте адресу гаманця, надішліть кошти, поверніться в додаток і підтвердіть оплату.",
+    demo: "Переказ USDT у мережі TON",
+    note: "Скопіюйте адресу гаманця, надішліть USDT у мережі TON, поверніться в додаток і підтвердіть оплату.",
     sending: "Надсилання...",
     success: "Заявку успішно надіслано!",
     error: "Не вдалося надіслати заявку. Спробуй ще раз.",
@@ -46,16 +45,16 @@ const words = {
     subtitle: "Выбирай пакет Telegram Stars",
     buy: "Выбрать пакет",
     continue: "Продолжить",
-    payment: "Способ оплаты",
-    choose: "Выбери способ оплаты",
+    payment: "Оплата USDT",
+    choose: "Оплата только в USDT в сети TON",
     back: "Назад",
     amount: "К оплате",
     address: "Адрес кошелька",
     copy: "Копировать адрес",
     copied: "Скопировано!",
     paid: "Отправить заявку",
-    demo: "Демонстрационный режим",
-    note: "Скопируйте адрес кошелька, отправьте средства, вернитесь в приложение и подтвердите оплату.",
+    demo: "Перевод USDT в сети TON",
+    note: "Скопируйте адрес кошелька, отправьте USDT в сети TON, вернитесь в приложение и подтвердите оплату.",
     sending: "Отправка...",
     success: "Заявка успешно отправлена!",
     error: "Не удалось отправить заявку. Попробуй ещё раз.",
@@ -67,16 +66,16 @@ const words = {
     subtitle: "Choose your Telegram Stars package",
     buy: "Choose package",
     continue: "Continue",
-    payment: "Payment method",
-    choose: "Choose payment method",
+    payment: "USDT Payment",
+    choose: "Payment only in USDT on TON network",
     back: "Back",
     amount: "Amount to pay",
     address: "Wallet address",
     copy: "Copy address",
     copied: "Copied!",
     paid: "Send request",
-    demo: "Demo mode",
-   note: "Copy the wallet address, send the funds, return to the app, and confirm the payment.",
+    demo: "USDT transfer on TON network",
+    note: "Copy the wallet address, send USDT on the TON network, return to the app, and confirm the payment.",
     sending: "Sending...",
     success: "Request sent successfully!",
     error: "Could not send request. Please try again.",
@@ -92,14 +91,13 @@ export default function App() {
   const [copied, setCopied] = useState(false);
   const [sending, setSending] = useState(false);
   const t = words[language];
-  const wallet = method ? wallets[method] : "";
+  const wallet = wallets.USDT;
   const money = (value) => Number(value).toFixed(2);
   async function copyWallet() {
     try {
       await navigator.clipboard.writeText(wallet);
       setCopied(true);
     } catch {
-
       alert(wallet);
 
     }
@@ -132,10 +130,10 @@ export default function App() {
 
           stars: selected.stars,
 
-          method,
+          method: "USDT_TON",
 
-          username: telegramUser?.username || "Не вказаний",userId: 
-telegramUser?.id || "Не отриманий",
+          username: telegramUser?.username || "Не вказаний",
+          userId: telegramUser?.id || "Не отриманий",
         }),
       });
       const result = await response.json();
@@ -184,18 +182,23 @@ telegramUser?.id || "Не отриманий",
               <div className="package-card" key={item.stars}>
                 <div className="package-top">
                   <div>
-                    <h2>⭐ {item.stars.toLocaleString("en-US")}</h2>
+                    <h2>
+                      ⭐ {item.stars.toLocaleString("en-US")}
+                    </h2>
                     <p>Telegram Stars</p>
                   </div>
                   <div className="price-block">
                     <strong>${money(item.usd)}</strong>
-                    <span>{money(item.ton)} TON</span>
                   </div>
                 </div>
                 <div className="package-info">
-                  <span>{t.reference}: ${money(item.old)}</span>
+                  <span>
+                    {t.reference}: ${money(item.old)}
+                  </span>
                   <span className="saving">
-                    -{Math.round((1 - item.usd / item.old) * 100)}%
+                    -{Math.round(
+                      (1 - item.usd / item.old) * 100
+                    )}%
                   </span>
                 </div>
                 <button
@@ -213,40 +216,65 @@ telegramUser?.id || "Не отриманий",
             ))}
           </div>
         </>
-      )}{screen === "order" && selected && (
+      )}
+      {screen === "order" && selected && (
         <section className="content-screen">
           <button className="back-button" onClick={goBack}>
             ← {t.back}
           </button>
-          <h1>⭐ {selected.stars.toLocaleString("en-US")} Stars</h1>
+          <h1>
+            ⭐ {selected.stars.toLocaleString("en-US")} Stars
+          </h1>
           <p className="muted">STARS DROP</p>
           <div className="details-card">
             <div className="detail-row">
               <span>{t.amount}</span>
-              <strong>${money(selected.usd)}</strong>
-            </div>
-            <div className="detail-row">
-              <span>TON</span>
-              <strong>{money(selected.ton)} TON</strong>
+              <strong>${money(selected.usd)} USDT</strong>
             </div>
             <div className="detail-row">
               <span>{t.reference}</span>
               <strong>${money(selected.old)}</strong>
+
             </div>
+
             <div className="detail-row">
+
               <span>{t.savings}</span>
+
               <strong className="saving">
-                {Math.round((1 - selected.usd / selected.old) * 100)}%
+
+                {Math.round(
+
+                  (1 - selected.usd / selected.old) * 100
+
+                )}%
+
               </strong>
+
             </div>
+
           </div>
+
           <button
+
             className="primary-button large"
-            onClick={() => setScreen("payment")}
+
+            onClick={() => {
+
+              setMethod("USDT");
+
+              setScreen("payment");
+
+            }}
+
           >
+
             {t.continue}
+
           </button>
+
         </section>
+
       )}
       {screen === "payment" && (
         <section className="content-screen">
@@ -255,74 +283,37 @@ telegramUser?.id || "Не отриманий",
           </button>
           <h1>{t.payment}</h1>
           <p className="muted">{t.choose}</p>
-          {!method ? (
-            <div className="payment-options">
-              <button
-                className="payment-option"
-                onClick={() => {
-                  setMethod("TON");
-                  setCopied(false);
-                }}
-              >
-                <span className="coin-icon ton-icon">T</span>
-                <span>
-                  <strong>TON</strong>
-                  <small>Мережа: TON</small>
-                </span>
-                <span>›</span>
-              </button>
-              <button
-                className="payment-option"
-                onClick={() => {
-                  setMethod("USDT");
-                  setCopied(false);
-                }}
-              >
-                <span className="coin-icon usdt-icon">$</span>
-                <span>
-                  <strong>USDT</strong>
-                  <small>Мережа: TRC20</small>
-                </span>
-                <span>›</span>
-              </button>
+          <div className="details-card payment-details">
+            <div className="demo-label">{t.demo}</div>
+            <h2>USDT</h2>
+            <div className="amount-label">{t.amount}</div>
+            <div className="amount-value">
+              {money(selected.usd)} USDT
             </div>
-          ) : (
-            <div className="details-card payment-details">
-              <div className="demo-label">{t.demo}</div>
-              <h2>{method}</h2>
-              <div className="amount-label">{t.amount}</div>
-              <div className="amount-value">
-                {method === "TON"
-                  ? `${money(selected.ton)} TON`
-                  : `${money(selected.usd)} USDT`}
-              </div>
-              <div className="address-label">{t.address}</div>
-              <div className="wallet-address">{wallet}</div>
-              <button
-                className="secondary-button"
-                onClick={copyWallet}
-              >
-                {copied ? t.copied : t.copy}
-              </button>
-              <button
-                className="primary-button large"
-                onClick={sendOrder}
-                disabled={sending}
-              >
-                {sending ? t.sending : t.paid}
-              </button>
-              <p className="demo-note">{t.note}</p>
+            <div className="address-label">{t.address}</div>
+            <div className="wallet-address">
+              {wallet}
             </div>
-          )}
-
+            <button
+              className="secondary-button"
+              onClick={copyWallet}
+            >
+              {copied ? t.copied : t.copy}
+            </button>
+            <button
+              className="primary-button large"
+              onClick={sendOrder}
+              disabled={sending}
+            >
+              {sending ? t.sending : t.paid}
+            </button>
+            <p className="demo-note">{t.note}</p>
+          </div>
         </section>
-
       )}
-
-      <footer className="footer">STARS DROP © 2026</footer>
-
+      <footer className="footer">
+        STARS DROP © 2026
+      </footer>
     </div>
-
   );
-
 }
