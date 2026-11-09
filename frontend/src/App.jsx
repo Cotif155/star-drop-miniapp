@@ -183,7 +183,8 @@ export default function App() {
                 <div className="package-top">
                   <div>
                     <h2>
-                      ⭐ {item.stars.toLocaleString("en-US")}
+                      <span className="star-animate">⭐</span>{" "}
+                      {item.stars.toLocaleString("en-US")}
                     </h2>
                     <p>Telegram Stars</p>
                   </div>
