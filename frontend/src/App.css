@@ -875,3 +875,29 @@ html, body {
   animation: green-pulse 1.8s ease-in-out infinite !important;
 }
 
+
+/* RED PULSE BACK BUTTONS */
+.back-button {
+  border-radius: 14px !important;
+  animation: red-pulse 1.8s ease-in-out infinite !important;
+  box-shadow: 0 4px 10px rgba(220, 35, 45, 0.25);
+  transition: transform 0.2s ease;
+}
+
+@keyframes red-pulse {
+  0%, 100% {
+    background: #c92332;
+    box-shadow: 0 3px 8px rgba(201, 35, 50, 0.25);
+  }
+  50% {
+    background: #f04452;
+    box-shadow: 0 5px 18px rgba(240, 68, 82, 0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-button {
+    animation: none !important;
+  }
+}
+
