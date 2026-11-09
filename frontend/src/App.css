@@ -708,3 +708,37 @@ html, body, #root, .app {
   font-size: 13px;
 }
 
+
+/* FIX MOBILE SCREEN WIDTH */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.app {
+  width: 100%;
+  max-width: 520px;
+  min-width: 0;
+  margin: 0 auto;
+}
+
+.package-list {
+  width: 100%;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.package-card {
+  min-width: 0;
+}
+
