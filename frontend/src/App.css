@@ -901,3 +901,39 @@ html, body {
   }
 }
 
+
+/* BIGGER SAVINGS BADGES */
+.package-info .saving {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 66px;
+  padding: 6px 10px !important;
+  border-radius: 10px !important;
+  background: #e1f8e9 !important;
+  color: #128344 !important;
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.3px;
+  box-shadow: 0 3px 9px rgba(22, 160, 80, 0.16);
+  animation: saving-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes saving-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 3px 8px rgba(22, 160, 80, 0.15);
+  }
+  50% {
+    transform: scale(1.07);
+    box-shadow: 0 4px 15px rgba(22, 160, 80, 0.35);
+  }
+}
+
+/* BIGGER TELEGRAM REFERENCE PRICE */
+.package-info > span:first-child {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: #555555 !important;
+}
+
