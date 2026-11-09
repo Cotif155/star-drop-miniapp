@@ -4,7 +4,7 @@
 body {
   margin: 0;
   background: #f1f2f5;
-  color: #202127;
+  color: #111111;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 button, select {
@@ -27,6 +27,7 @@ button, select {
   font-size: 20px;
   font-weight: 850;
   letter-spacing: -0.7px;
+  color: #000000;
 }
 .topbar select {
   border: 0;
@@ -47,6 +48,8 @@ button, select {
   font-size: 25px;
   margin: 5px 0 8px;
   letter-spacing: -0.8px;
+  color: #000000;
+  font-weight: 850;
 }
 .hero p {
   color: #858995;
@@ -73,6 +76,8 @@ button, select {
 .package-top h2 {
   font-size: 19px;
   margin: 0 0 3px;
+  color: #000000;
+  font-weight: 850;
 }
 .package-top p {
   color: #969aa4;
@@ -88,6 +93,7 @@ button, select {
 .price-block strong {
   font-size: 19px;
   font-weight: 800;
+  color: #000000;
 }
 .price-block span {
   color: #656b77;
@@ -99,264 +105,138 @@ button, select {
   justify-content: space-between;
   gap: 5px;
   align-items: center;
-
   margin: 13px 0;
-
   font-size: 11px;
-
   color: #9296a0;
-
 }
-
 .saving {
-
   color: #168b59 !important;
-
   font-weight: 800;
-
 }
-
 .primary-button {
-
   width: 100%;
-
   border: none;
-
   border-radius: 12px;
-
   padding: 13px 10px;
-
   background: #24272d;
-
   color: white;
-
   font-weight: 750;
-
   cursor: pointer;
-
   transition: 0.15s;
-
 }
-
 .primary-button:active {
-
   transform: scale(0.98);
-
   background: #41454e;
-
 }
-
 .large {
-
   margin-top: 18px;
-
   padding: 16px;
-
   font-size: 15px;
-
 }
-
 .content-screen {
-
   background: white;
-
   border-radius: 21px;
-
   padding: 20px;
-
   box-shadow: 0 3px 14px rgba(20, 25, 35, 0.035);
-
 }
-
 .content-screen h1 {
-
   font-size: 24px;
-
   margin: 12px 0;
-
+  color: #000000;
+  font-weight: 850;
 }
-
 .back-button {
-
   border: none;
-
   background: #f0f1f4;
-
   color: #343740;
-
   padding: 10px 14px;
-
   border-radius: 10px;
-
   font-weight: 700;
-
   cursor: pointer;
-
 }
-
 .details-card {
-
   background: #f5f6f8;
-
   border-radius: 16px;
-
   padding: 17px;
-
   margin-top: 15px;
-
 }
-
 .detail-row {
-
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
-
   padding: 12px 0;
-
   border-bottom: 1px solid #e5e6e9;
-
   font-size: 14px;
-
   gap: 10px;
-
 }
-
 .detail-row:last-child {
-
   border-bottom: none;
-
 }
-
 .detail-row span {
-
   color: #777c87;
-
 }
-
 .detail-row strong {
-
   font-weight: 800;
-
+  color: #000000;
 }
-
 .muted {
-
   color: #858995;
-
   font-size: 14px;
-
 }
-
 .payment-options {
-
   display: flex;
-
   flex-direction: column;
-
   gap: 12px;
-
   margin-top: 20px;
-
 }
-
 .payment-option {
-
   display: flex;
-
   align-items: center;
-
   gap: 13px;
-
   width: 100%;
-
   padding: 16px;
-
   border: 1px solid #e8e9ed;
-
   border-radius: 15px;
-
   background: #f8f9fb;
-
   text-align: left;
-
   cursor: pointer;
-
 }
-
 .payment-option strong {
-
   display: block;
-
   font-size: 16px;
-
 }
-
 .payment-option small {
-
   display: block;
-
   color: #747985;
-
   font-size: 13px;
-
   margin-top: 5px;
-
 }
-
 .payment-option > span:last-child {
-
   margin-left: auto;
-
   font-size: 25px;
-
   color: #9296a0;
-
 }
-
 .coin-icon {
-
   width: 43px;
-
   height: 43px;
-
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
   border-radius: 50%;
-
   color: white;
-
   font-size: 21px;
-
   font-weight: 800;
-
 }
-
 .ton-icon {
-
   background: #168bd2;
-
 }
-
 .usdt-icon {
-
   background: #24a47a;
-
 }
-
 .payment-details {
-
   margin-top: 18px;
-
 }
-
-.demo-label { 
+.demo-label {
   display: inline-block;
   padding: 7px 11px;
   border-radius: 8px;
@@ -369,6 +249,7 @@ button, select {
 .payment-details h2 {
   font-size: 25px;
   margin: 16px 0 5px;
+  color: #000000;
 }
 .amount-label,
 .address-label {
@@ -380,6 +261,7 @@ button, select {
   font-size: 25px;
   font-weight: 850;
   margin-top: 7px;
+  color: #000000;
 }
 .wallet-address {
   margin-top: 9px;
@@ -402,31 +284,59 @@ button, select {
   border-radius: 11px;
   font-weight: 750;
   color: #282b32;
+
   cursor: pointer;
+
 }
+
 .demo-note {
+
   font-size: 12px;
+
   line-height: 1.5;
+
   color: #888d97;
+
   text-align: center;
+
   margin: 15px 0 5px;
+
 }
+
 .footer {
+
   text-align: center;
+
   color: #a0a3ac;
+
   font-size: 11px;
+
   padding: 25px 0 5px;
+
   font-weight: 700;
+
   letter-spacing: 1px;
+
 }
+
 @media (max-width: 360px) {
+
   .app {
+
     padding: 13px 10px;
+
   }
+
   .package-card {
+
     padding: 11px;
+
   }
+
   .price-block strong {
+
     font-size: 17px;
+
   }
+
 }
