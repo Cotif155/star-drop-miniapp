@@ -742,3 +742,67 @@ html, body {
   min-width: 0;
 }
 
+
+/* COMPACT STAR PACKAGE CARDS */
+.package-list {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  align-items: stretch !important;
+}
+
+.package-card {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 195px !important;
+  padding: 14px !important;
+  border-radius: 20px !important;
+  background: #ffffff !important;
+}
+
+.package-top {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 5px !important;
+}
+
+.package-top h2 {
+  font-size: 20px !important;
+  margin: 0;
+}
+
+.package-top p {
+  font-size: 12px !important;
+  margin: 4px 0;
+}
+
+.price-block {
+  text-align: left !important;
+}
+
+.price-block strong {
+  font-size: 19px !important;
+}
+
+.package-info {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: 11px !important;
+}
+
+.package-card .primary-button {
+  width: 100% !important;
+  min-height: 42px !important;
+  padding: 10px 6px !important;
+  font-size: 13px !important;
+  border-radius: 13px !important;
+}
+
