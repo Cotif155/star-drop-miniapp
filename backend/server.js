@@ -55,7 +55,8 @@ async function database(path, method, body) {
     }
   );
   if (!response.ok) {
-    throw new Error("Database error: " + response.status);
+    const errorText = await response.text();
+    throw new Error("Supabase " + response.status + ": " + errorText);
   }
   const result = await response.text();
   return result ? JSON.parse(result) : null;
