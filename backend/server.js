@@ -248,14 +248,13 @@ async function handleOrder(req, res) {
     const username = String(order.username || "Не вказаний");
     const userId = String(order.userId || "Не отриманий");
     const message =
-      "⭐ STARS DROP — НОВЕ ЗАМОВЛЕННЯ\n\n" +
-      "👤 Username: @" + username + "\n" +
-      "🆔 Telegram ID: " + userId + "\n" +
-      "⭐ Пакет: " + stars + " Stars\n" +
-      "💰 Сума: " + prices[stars].toFixed(2) + " USDT\n" +
-      "💳 Оплата: USDT (TON)\n\n" +
-
-      "🕒 Очікує перевірки оплати";
+      "⭐ STARS DROP\n\n" +
+      "Выплачено\n" +
+      "👤Username: @" + username + "\n" +
+      "🆔Telegram ID: " + userId + "\n" +
+      "⭐Пакет: " + stars + " Stars\n" +
+      "🤑Сума: " + prices[stars].toFixed(2) + " USDT\n" +
+      "👛Оплата: USDT (TON)";
 
     const result = await telegram("sendMessage", {
 
