@@ -39,6 +39,19 @@ const words = {
     error: "Не вдалося надіслати заявку. Спробуй ще раз.",
     savings: "Економія",
     reference: "Ціна Telegram",
+    referral: "Реферальна програма",
+    reward: "Отримуй 5 ⭐ за кожного нового друга",
+    loading: "Завантаження...",
+    balance: "Твій баланс",
+    friends: "Запрошені друзі",
+    earned: "Усього зароблено",
+    withdrawn: "Усього виведено",
+    invite: "Твоє реферальне посилання",
+    copyLink: "Копіювати посилання",
+    copiedLink: "Посилання скопійовано!",
+    withdrawInfo: "Мінімальне виведення — 100 ⭐",
+    withdraw: "Вивести 100 ⭐",
+    withdrawSuccess: "Заявку на виведення надіслано!",
   },
   RU: {
     title: "Каталог Stars",
@@ -60,6 +73,19 @@ const words = {
     error: "Не удалось отправить заявку. Попробуй ещё раз.",
     savings: "Экономия",
     reference: "Цена Telegram",
+    referral: "Реферальная программа",
+    reward: "Получай 5 ⭐ за каждого нового друга",
+    loading: "Загрузка...",
+    balance: "Твой баланс",
+    friends: "Приглашённые друзья",
+    earned: "Всего заработано",
+    withdrawn: "Всего выведено",
+    invite: "Твоя реферальная ссылка",
+    copyLink: "Копировать ссылку",
+    copiedLink: "Ссылка скопирована!",
+    withdrawInfo: "Минимальный вывод — 100 ⭐",
+    withdraw: "Вывести 100 ⭐",
+    withdrawSuccess: "Заявка на вывод отправлена!",
   },
   EN: {
     title: "Stars Catalog",
@@ -81,6 +107,19 @@ const words = {
     error: "Could not send request. Please try again.",
     savings: "Savings",
     reference: "Telegram price",
+    referral: "Referral program",
+    reward: "Get 5 ⭐ for every new friend",
+    loading: "Loading...",
+    balance: "Your balance",
+    friends: "Invited friends",
+    earned: "Total earned",
+    withdrawn: "Total withdrawn",
+    invite: "Your referral link",
+    copyLink: "Copy link",
+    copiedLink: "Link copied!",
+    withdrawInfo: "Minimum withdrawal — 100 ⭐",
+    withdraw: "Withdraw 100 ⭐",
+    withdrawSuccess: "Withdrawal request sent!",
   },
 };
 export default function App() {
@@ -90,6 +129,10 @@ export default function App() {
   const [method, setMethod] = useState(null);
   const [copied, setCopied] = useState(false);
   const [sending, setSending] = useState(false);
+  const [referralData, setReferralData] = useState(null);
+  const [referralLoading, setReferralLoading] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const [withdrawLoading, setWithdrawLoading] = useState(false);
   const t = words[language];
   const wallet = wallets.USDT;
   const money = (value) => Number(value).toFixed(2);
@@ -106,7 +149,7 @@ export default function App() {
 
   async function sendOrder() {
 
-    if (sending || !selected || !method) return;
+   if (sending || !selected || !method) return;
 
     setSending(true);
 
@@ -131,7 +174,6 @@ export default function App() {
           stars: selected.stars,
 
           method: "USDT_TON",
-
           username: telegramUser?.username || "Не вказаний",
           userId: telegramUser?.id || "Не отриманий",
         }),
@@ -146,6 +188,68 @@ export default function App() {
       alert(t.error);
     } finally {
       setSending(false);
+    }
+  }
+  async function loadReferral() {
+    setScreen("referral");
+    setReferralLoading(true);
+    try {
+      const response = await fetch("/api/referral", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          initData: window.Telegram?.WebApp?.initData || ""
+        })
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Referral request failed");
+      }
+      setReferralData(result);
+      setLinkCopied(false);
+    } catch (error) {
+      console.error("Referral error:", error);
+      setReferralData(null);
+      alert(t.error);
+    } finally {
+      setReferralLoading(false);
+    }
+  }
+
+  async function copyReferralLink() {
+    if (!referralData?.referralLink) return;
+    try {
+      await navigator.clipboard.writeText(referralData.referralLink);
+      setLinkCopied(true);
+    } catch {
+      alert(referralData.referralLink);
+    }
+  }
+
+
+  async function withdrawReferral() {
+    if (withdrawLoading) return;
+    if (Number(referralData?.balance || 0) < 100) return;
+    setWithdrawLoading(true);
+    try {
+      const response = await fetch("/api/referral/withdraw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          initData: window.Telegram?.WebApp?.initData || ""
+        })
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Withdrawal failed");
+      }
+      alert(t.withdrawSuccess);
+      await loadReferral();
+    } catch (error) {
+      console.error("Withdrawal error:", error);
+      alert(t.error);
+    } finally {
+      setWithdrawLoading(false);
     }
   }
   function goBack() {
@@ -177,6 +281,13 @@ export default function App() {
             <h1>{t.title}</h1>
             <p>{t.subtitle}</p>
           </section>
+          <button
+            className="secondary-button referral-open"
+            onClick={loadReferral}
+          >
+            ⭐ {t.referral}
+          </button>
+
           <div className="package-list">
             {packages.map((item) => (
               <div className="package-card" key={item.stars}>
@@ -275,8 +386,7 @@ export default function App() {
           </button>
 
         </section>
-
-      )}
+        )}
       {screen === "payment" && (
         <section className="content-screen">
           <button className="back-button" onClick={goBack}>
@@ -314,6 +424,80 @@ export default function App() {
           </div>
         </section>
       )}
+    {screen === "referral" && (
+      <section className="content-screen referral-screen">
+        <button className="back-button" onClick={() => setScreen("catalog")}>
+          ← {t.back}
+        </button>
+        <section className="hero">
+          <h1>⭐ {t.referral}</h1>
+          <p>{t.reward}</p>
+        </section>
+        {referralLoading ? (
+          <div className="details-card">
+            <p>{t.loading}</p>
+          </div>
+        ) : referralData ? (
+          <>
+            <div className="details-card referral-balance">
+              <div className="referral-stat-label">{t.balance}</div>
+              <div className="referral-big-number">
+                {referralData.balance || 0} ⭐
+              </div>
+            </div>
+            <div className="referral-stats">
+              <div className="details-card">
+                <div className="referral-stat-label">{t.friends}</div>
+                <div className="referral-stat-number">
+                  {referralData.totalReferrals || 0}
+                </div>
+              </div>
+              <div className="details-card">
+                <div className="referral-stat-label">{t.earned}</div>
+                <div className="referral-stat-number">
+                  {referralData.totalEarned || 0} ⭐
+                </div>
+              </div>
+              <div className="details-card">
+                <div className="referral-stat-label">{t.withdrawn}</div>
+                <div className="referral-stat-number">
+                  {referralData.totalWithdrawn || 0} ⭐
+                </div>
+              </div>
+            </div>
+            <div className="details-card">
+              <div className="address-label">{t.invite}</div>
+              <div className="wallet-address referral-link">
+                {referralData.referralLink}
+              </div>
+              <button className="primary-button" onClick={copyReferralLink}>
+                {linkCopied ? t.copiedLink : t.copyLink}
+              </button>
+            </div>
+            <div className="details-card">
+              <p className="referral-info">{t.withdrawInfo}</p>
+              <button
+                className="primary-button large"
+                onClick={withdrawReferral}
+                disabled={
+                  withdrawLoading ||
+                  Number(referralData.balance || 0) < 100
+                }
+              >
+                {withdrawLoading ? t.loading : t.withdraw}
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className="details-card">
+            <p>{t.error}</p>
+            <button className="primary-button" onClick={loadReferral}>
+              Спробувати ще раз
+            </button>
+          </div>
+        )}
+      </section>
+    )}
       <footer className="footer">
         STARS DROP © 2026
       </footer>

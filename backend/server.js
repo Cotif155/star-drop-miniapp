@@ -1,4 +1,8 @@
 import { createServer } from "node:http";
+import {
+  createReferralGetHandler,
+  createReferralWithdrawHandler
+} from "./referrals.js";
 try {
   process.loadEnvFile(".env");
 } catch {}
@@ -103,6 +107,22 @@ async function handleMessage(message) {
   const user = message.from;
   const chatId = message.chat.id;
   const text = message.text || "";
+  const refMatch = text.match(/^\/start(?:@\w+)?\s+ref_(\d+)$/);
+if (refMatch) {
+  const existing = await database(
+    "referral_accounts?select=telegram_id&telegram_id=eq." +
+    encodeURIComponent(user.id) +
+    "&limit=1"
+  );
+  const isNew = Array.isArray(existing) && existing.length === 0;
+  await database("rpc/register_referral_user", "POST", {
+    p_telegram_id: user.id,
+    p_username: user.username || null,
+    p_first_name: user.first_name || null,
+    p_referrer_id: refMatch[1],
+    p_eligible_new: isNew
+  });
+}
   await saveUser(user, text === "/start");
   if (String(user.id) === ADMIN_ID && text === "/broadcast") {
     sessions.set(user.id, { step: "waiting" });
@@ -287,7 +307,18 @@ async function handleOrder(req, res) {
   }
 
 }
+const handleReferral = createReferralGetHandler({
+  database,
+  telegram,
+  botToken: BOT_TOKEN
+});
 
+const handleReferralWithdraw = createReferralWithdrawHandler({
+  database,
+  telegram,
+  botToken: BOT_TOKEN,
+  adminId: ADMIN_ID
+});
 const server = createServer(async function(req, res) {
 
   res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -324,6 +355,15 @@ const server = createServer(async function(req, res) {
 
     return;
 
+  }
+  if (req.method === "POST" && req.url === "/api/referral") {
+    await handleReferral(req, res);
+    return;
+  }
+
+  if (req.method === "POST" && req.url === "/api/referral/withdraw") {
+    await handleReferralWithdraw(req, res);
+    return;
   }
   if (req.method === "POST" && req.url === "/telegram-webhook") {
     if (
