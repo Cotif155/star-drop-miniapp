@@ -1386,3 +1386,28 @@ html, body {
   background-position: 12px 18px, 55px 72px, 90px 35px !important;
 }
 
+
+/* CENTERED GOLD BRAND ON CATALOG PAGE */
+.app.catalog-mode .topbar {
+  position: relative;
+  justify-content: flex-end;
+  min-height: 36px;
+}
+
+.app.catalog-mode .brand {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ffd447 !important;
+  font-size: 25px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1px !important;
+  white-space: nowrap;
+  text-shadow: 0 0 10px rgba(255, 204, 55, 0.35);
+}
+
+.app.catalog-mode .topbar select {
+  position: relative;
+  z-index: 2;
+}
+
