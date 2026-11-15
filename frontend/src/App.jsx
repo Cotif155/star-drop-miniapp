@@ -453,9 +453,11 @@ export default function App() {
         <button className="back-button" onClick={() => setScreen("catalog")}>
           ← {t.back}
         </button>
-        <section className="hero">
-          <h1>⭐ {t.referral}</h1>
-          <p>{t.reward}</p>
+        <section className="hero referral-hero">
+          <h1><span className="referral-heading-star">⭐</span> {t.referral}</h1>
+          <p className="referral-reward">
+            {t.reward.split("⭐")[0]}<span className="referral-moving-star">⭐</span>{t.reward.split("⭐")[1]}
+          </p>
         </section>
         {referralLoading ? (
           <div className="details-card">

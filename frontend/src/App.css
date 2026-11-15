@@ -1055,3 +1055,72 @@ html, body {
     transform: scale(1.22);
   }
 }
+
+/* REFERRAL HEADER AND ANIMATIONS */
+.referral-hero {
+  background: #e8f4ff !important;
+  border-color: #cfe6fa !important;
+  box-shadow: 0 5px 20px rgba(50, 130, 190, 0.08);
+}
+
+.referral-hero .referral-reward {
+  color: #355b7b !important;
+  font-weight: 800 !important;
+}
+
+.referral-heading-star,
+.referral-moving-star {
+  display: inline-block;
+}
+
+.referral-heading-star {
+  animation: referralStarFloat 1.4s ease-in-out infinite;
+}
+
+.referral-moving-star {
+  animation: referralStarSlide 1.2s ease-in-out infinite;
+}
+
+@keyframes referralStarFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(15deg); }
+}
+
+@keyframes referralStarSlide {
+  0%, 100% { transform: translateX(-3px) rotate(-8deg); }
+  50% { transform: translateX(5px) rotate(8deg); }
+}
+
+/* GREEN PULSING REFERRAL CARDS */
+.referral-stat-card {
+  background: #e2f7e9 !important;
+  border: 1px solid #bce8cb !important;
+  animation: referralCardPulse 1.8s ease-in-out infinite;
+}
+
+.referral-stat-card .referral-stat-label {
+  color: #276b40 !important;
+}
+
+.referral-stat-card .referral-stat-number {
+  color: #176b38 !important;
+}
+
+@keyframes referralCardPulse {
+  0%, 100% {
+    background: #e2f7e9;
+    box-shadow: 0 0 4px rgba(22, 128, 68, 0.12);
+  }
+  50% {
+    background: #d4f3df;
+    box-shadow: 0 0 16px rgba(32, 184, 93, 0.3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .referral-heading-star,
+  .referral-moving-star,
+  .referral-stat-card {
+    animation: none !important;
+  }
+}
