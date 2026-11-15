@@ -431,7 +431,7 @@ const server = createServer(async function(req, res) {
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta http-equiv="refresh" content="0;url=${deepLink}">
+
 <title>STARS DROP</title>
 </head><body>
 <a href="${deepLink}">Відкрити STARS DROP</a>
