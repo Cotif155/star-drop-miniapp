@@ -463,29 +463,29 @@ export default function App() {
           </div>
         ) : referralData ? (
           <>
-            <div className="details-card referral-balance">
-              <div className="referral-stat-label">{t.balance}</div>
-              <div className="referral-big-number">
-                {referralData.balance || 0} ⭐
-              </div>
-            </div>
             <div className="referral-stats">
-              <div className="details-card">
+              <div className="details-card referral-stat-card">
+                <div className="referral-stat-label">{t.balance}</div>
+                <div className="referral-stat-number">
+                  {referralData.balance || 0} <span className="referral-star">⭐</span>
+                </div>
+              </div>
+              <div className="details-card referral-stat-card">
                 <div className="referral-stat-label">{t.friends}</div>
                 <div className="referral-stat-number">
                   {referralData.totalReferrals || 0}
                 </div>
               </div>
-              <div className="details-card">
+              <div className="details-card referral-stat-card">
                 <div className="referral-stat-label">{t.earned}</div>
                 <div className="referral-stat-number">
-                  {referralData.totalEarned || 0} ⭐
+                  {referralData.totalEarned || 0} <span className="referral-star">⭐</span>
                 </div>
               </div>
-              <div className="details-card">
+              <div className="details-card referral-stat-card">
                 <div className="referral-stat-label">{t.withdrawn}</div>
                 <div className="referral-stat-number">
-                  {referralData.totalWithdrawn || 0} ⭐
+                  {referralData.totalWithdrawn || 0} <span className="referral-star">⭐</span>
                 </div>
               </div>
             </div>
