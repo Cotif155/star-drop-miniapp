@@ -399,7 +399,7 @@ const server = createServer(async function(req, res) {
   if (req.method === "GET" && req.url.startsWith("/ref/")) {
     const referrerId = req.url.split("/")[2];
 
-    if (!/^\\d+$/.test(referrerId || "")) {
+    if (!/^\d+$/.test(referrerId || "")) {
       res.writeHead(400);
       res.end("Invalid referral link");
       return;
