@@ -497,25 +497,31 @@ export default function App() {
                 {referralData.referralLink}
               </div>
               <div className="referral-actions">
-                <button className="primary-button" onClick={copyReferralLink}>
+                <button className="primary-button referral-copy-button" onClick={copyReferralLink}>
                   {linkCopied ? t.copiedLink : t.copyLink}
                 </button>
-                <button className="primary-button" onClick={shareReferralLink}>
+                <button className="primary-button referral-share-button" onClick={shareReferralLink}>
                   {t.shareLink}
                 </button>
               </div>
             </div>
             <div className="details-card">
-              <p className="referral-info">{t.withdrawInfo}</p>
+              <p className="referral-info">
+                {t.withdrawInfo.split("⭐")[0]}<span className="referral-info-star">⭐</span>{t.withdrawInfo.split("⭐")[1]}
+              </p>
               <button
-                className="primary-button large"
+                className="primary-button large referral-withdraw-button"
                 onClick={withdrawReferral}
                 disabled={
                   withdrawLoading ||
                   Number(referralData.balance || 0) < 100
                 }
               >
-                {withdrawLoading ? t.loading : t.withdraw}
+                {withdrawLoading ? t.loading : (
+                  <>
+                    {t.withdraw.split("⭐")[0]}<span className="referral-button-star">⭐</span>{t.withdraw.split("⭐")[1]}
+                  </>
+                )}
               </button>
             </div>
           </>

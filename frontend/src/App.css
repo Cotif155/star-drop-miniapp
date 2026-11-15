@@ -1155,3 +1155,74 @@ html, body {
     box-shadow: 0 0 18px rgba(131, 217, 52, 0.65);
   }
 }
+
+/* ORANGE REFERRAL COPY AND SHARE BUTTONS */
+.referral-actions .referral-copy-button,
+.referral-actions .referral-share-button {
+  background: #f28c28 !important;
+  color: #111111 !important;
+  border: none !important;
+  animation: referralOrangePulse 1.8s ease-in-out infinite !important;
+  font-weight: 800 !important;
+}
+
+@keyframes referralOrangePulse {
+  0%, 100% {
+    background: #f28c28;
+    box-shadow: 0 0 5px rgba(242, 140, 40, 0.2);
+  }
+  50% {
+    background: #ffad42;
+    box-shadow: 0 0 16px rgba(255, 157, 40, 0.5);
+  }
+}
+
+/* RED WITHDRAW BUTTON */
+.referral-withdraw-button {
+  background: #ed3434 !important;
+  color: #111111 !important;
+  border: none !important;
+  font-weight: 850 !important;
+  animation: referralRedPulse 1.8s ease-in-out infinite !important;
+}
+
+@keyframes referralRedPulse {
+  0%, 100% {
+    background: #ed3434;
+    box-shadow: 0 0 5px rgba(237, 52, 52, 0.2);
+  }
+  50% {
+    background: #ff5a50;
+    box-shadow: 0 0 16px rgba(237, 52, 52, 0.45);
+  }
+}
+
+/* BOUNCING STARS */
+.referral-button-star,
+.referral-info-star {
+  display: inline-block;
+  color: #ffcc00;
+  animation: referralButtonStarBounce 1s ease-in-out infinite;
+}
+
+@keyframes referralButtonStarBounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(15deg); }
+}
+
+/* BOLDER MINIMUM WITHDRAWAL TEXT */
+.referral-info {
+  font-weight: 800 !important;
+  color: #171717 !important;
+  font-size: 15px !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .referral-actions .referral-copy-button,
+  .referral-actions .referral-share-button,
+  .referral-withdraw-button,
+  .referral-button-star,
+  .referral-info-star {
+    animation: none !important;
+  }
+}
