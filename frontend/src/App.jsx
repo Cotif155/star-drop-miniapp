@@ -53,6 +53,11 @@ const words = {
     withdrawInfo: "Мінімальне виведення — 100 ⭐",
     withdraw: "Вивести 100 ⭐",
     withdrawSuccess: "Заявку на виведення надіслано!",
+    howTitle: "💡 Як це працює?",
+    how1: "1. Поділіться своїм реферальним посиланням із друзями.",
+    how2: "2. Друзі переходять за вашим посиланням і реєструються в STARS DROP.",
+    how3: "3. За кожного нового запрошеного друга ви отримуєте 5 ⭐.",
+    how4: "4. Коли назбираєте 100 ⭐, зможете подати заявку на виведення.",
   },
   RU: {
     title: "Каталог Stars",
@@ -88,6 +93,11 @@ const words = {
     withdrawInfo: "Минимальный вывод — 100 ⭐",
     withdraw: "Вывести 100 ⭐",
     withdrawSuccess: "Заявка на вывод отправлена!",
+    howTitle: "💡 Как это работает?",
+    how1: "1. Поделитесь своей реферальной ссылкой с друзьями.",
+    how2: "2. Друзья переходят по вашей ссылке и регистрируются в STARS DROP.",
+    how3: "3. За каждого нового приглашённого друга вы получаете 5 ⭐.",
+    how4: "4. Когда накопите 100 ⭐, сможете подать заявку на вывод.",
   },
   EN: {
     title: "Stars Catalog",
@@ -123,6 +133,11 @@ const words = {
     withdrawInfo: "Minimum withdrawal — 100 ⭐",
     withdraw: "Withdraw 100 ⭐",
     withdrawSuccess: "Withdrawal request sent!",
+    howTitle: "💡 How does it work?",
+    how1: "1. Share your referral link with friends.",
+    how2: "2. Friends follow your link and register in STARS DROP.",
+    how3: "3. You receive 5 ⭐ for every new friend you invite.",
+    how4: "4. Once you collect 100 ⭐, you can submit a withdrawal request.",
   },
 };
 export default function App() {
@@ -525,11 +540,11 @@ export default function App() {
               </button>
             </div>
             <div className="referral-how-card">
-              <h3>💡 Як це працює?</h3>
-              <p>1. Поділіться своїм реферальним посиланням із друзями.</p>
-              <p>2. Друзі переходять за вашим посиланням і реєструються в STARS DROP.</p>
-              <p>3. За кожного нового запрошеного друга ви отримуєте <strong>5 ⭐</strong>.</p>
-              <p>4. Коли назбираєте <strong>100 ⭐</strong>, зможете подати заявку на виведення.</p>
+              <h3>{t.howTitle}</h3>
+              <p>{t.how1}</p>
+              <p>{t.how2}</p>
+              <p>{t.how3}</p>
+              <p>{t.how4}</p>
             </div>
           </>
         ) : (
