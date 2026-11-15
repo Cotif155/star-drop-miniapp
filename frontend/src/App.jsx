@@ -234,10 +234,10 @@ export default function App() {
     if (!referralData?.referralLink) return;
 
     const message = language === "UA"
-      ? "⭐ STARS DROP\\nОтримуй Telegram Stars швидко та вигідно!\\n🎁 Запрошуй друзів і отримуй 5 ⭐ за кожного."
+      ? "⭐ STARS DROP\nОтримуй Telegram Stars швидко та вигідно!\n🎁 Запрошуй друзів і отримуй 5 ⭐ за кожного."
       : language === "RU"
-      ? "⭐ STARS DROP\\nПолучай Telegram Stars быстро и выгодно!\\n🎁 Приглашай друзей и получай 5 ⭐ за каждого."
-      : "⭐ STARS DROP\\nGet Telegram Stars quickly and at a great price!\\n🎁 Invite friends and get 5 ⭐ for each one.";
+      ? "⭐ STARS DROP\nПолучай Telegram Stars быстро и выгодно!\n🎁 Приглашай друзей и получай 5 ⭐ за каждого."
+      : "⭐ STARS DROP\nGet Telegram Stars quickly and at a great price!\n🎁 Invite friends and get 5 ⭐ for each one.";
 
     const shareUrl = "https://t.me/share/url?url=" +
       encodeURIComponent(referralData.referralLink) +
