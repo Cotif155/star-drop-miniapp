@@ -324,7 +324,7 @@ export default function App() {
             className="secondary-button referral-open"
             onClick={loadReferral}
           >
-            ⭐ {t.referral}
+            <span className="star-animate">⭐</span> {t.referral}
           </button>
 
           <div className="package-list">

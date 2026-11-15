@@ -1578,3 +1578,44 @@ html, body {
 .app.payment-mode .payment-details > h2 {
   text-align: center;
 }
+
+/* GREEN CENTERED REFERRAL BUTTON ON CATALOG */
+.app.catalog-mode .referral-open {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 300px) !important;
+  min-height: 50px;
+  margin: -8px auto 20px !important;
+  padding: 12px 18px !important;
+  border: none !important;
+  border-radius: 15px !important;
+  background: #25b85a !important;
+  color: #101810 !important;
+  font-size: 15px !important;
+  font-weight: 850 !important;
+  box-shadow: 0 0 10px rgba(37,184,90,0.3);
+  animation: catalogReferralPulse 1.8s ease-in-out infinite !important;
+}
+
+@keyframes catalogReferralPulse {
+  0%, 100% {
+    background: #25b85a;
+    box-shadow: 0 0 7px rgba(37,184,90,0.3);
+  }
+  50% {
+    background: #54e681;
+    box-shadow: 0 0 19px rgba(37,230,129,0.65);
+  }
+}
+
+.app.catalog-mode .referral-open .star-animate {
+  margin-right: 5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app.catalog-mode .referral-open,
+  .app.catalog-mode .referral-open .star-animate {
+    animation: none !important;
+  }
+}
