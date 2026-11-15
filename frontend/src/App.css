@@ -1374,3 +1374,15 @@ html, body {
   }
 }
 
+
+/* FULL-PAGE STAR BACKGROUND FOR CATALOG */
+.app.catalog-mode {
+  background-color: #111318 !important;
+  background-image:
+    radial-gradient(circle, rgba(255, 220, 120, 0.95) 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.75) 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(255, 200, 80, 0.5) 1px, transparent 2px) !important;
+  background-size: 97px 113px, 137px 149px, 181px 167px !important;
+  background-position: 12px 18px, 55px 72px, 90px 35px !important;
+}
+
