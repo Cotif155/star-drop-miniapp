@@ -302,7 +302,7 @@ export default function App() {
     }
   }
   return (
-    <div className="app">
+    <div className={`app ${screen === "referral" ? "referral-mode" : ""}`}>
       <header className="topbar">
         <div className="brand">⭐ STARS DROP</div>
         <select
