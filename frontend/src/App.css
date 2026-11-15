@@ -1124,3 +1124,34 @@ html, body {
     animation: none !important;
   }
 }
+
+/* BRIGHT LIME REFERRAL STATISTICS */
+.referral-stat-card {
+  background: #a8ef55 !important;
+  border: 1px solid #83d934 !important;
+  animation: limeCardPulse 1.8s ease-in-out infinite !important;
+}
+
+.referral-stat-card .referral-stat-label {
+  color: #17220e !important;
+  font-weight: 700 !important;
+}
+
+.referral-stat-card .referral-stat-number {
+  color: #111111 !important;
+  font-weight: 850 !important;
+}
+
+.referral-stat-card .referral-star {
+  color: #ffcc00 !important;
+  filter: drop-shadow(0 1px 2px rgba(130, 90, 0, 0.25));
+}
+
+@keyframes limeCardPulse {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(131, 217, 52, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(131, 217, 52, 0.65);
+  }
+}
