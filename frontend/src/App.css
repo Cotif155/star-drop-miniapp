@@ -1423,3 +1423,92 @@ html, body {
   background-position: 12px 18px, 55px 72px, 90px 35px !important;
 }
 
+
+/* ORDER PAGE: MODERN BACK BUTTON */
+.app.order-mode .content-screen > .back-button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 9px 17px !important;
+  margin-top: 0 !important;
+  margin-bottom: 20px !important;
+  border: 1px solid rgba(255,255,255,0.22) !important;
+  border-radius: 12px !important;
+  background: rgba(48,52,63,0.92) !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 750 !important;
+  animation: none !important;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25) !important;
+}
+
+/* ORDER PAGE: CENTERED ORANGE BRAND */
+.app.order-mode .topbar {
+  position: relative;
+  justify-content: flex-end;
+  min-height: 36px;
+}
+
+.app.order-mode .brand {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ff9b35 !important;
+  font-size: 25px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1px !important;
+  white-space: nowrap;
+  text-shadow: 0 0 12px rgba(255,145,40,0.45);
+}
+
+.app.order-mode .topbar select {
+  position: relative;
+  z-index: 2;
+}
+
+/* ORDER PAGE: ORANGE PACKAGE TITLE */
+.app.order-mode .content-screen > h1 {
+  color: #ff9b35 !important;
+  text-align: center;
+  font-weight: 900 !important;
+  text-shadow: 0 0 12px rgba(255,145,40,0.3);
+}
+
+.app.order-mode .content-screen > h1 > span,
+.app.order-mode .content-screen > h1 {
+  --order-star-color: #ffd447;
+}
+
+
+/* ANIMATED STAR BESIDE PACKAGE AMOUNT */
+.app.order-mode .content-screen > .order-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+.order-title-star {
+  display: inline-block;
+  color: #ffd447;
+  transform-origin: center;
+  animation: orderStarPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes orderStarPulse {
+  0%, 100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 3px rgba(255, 212, 71, 0.4));
+  }
+  50% {
+    transform: translateY(-5px) scale(1.2) rotate(15deg);
+    filter: drop-shadow(0 0 10px rgba(255, 212, 71, 0.9));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .order-title-star {
+    animation: none !important;
+  }
+}

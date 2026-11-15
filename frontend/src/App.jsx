@@ -373,8 +373,9 @@ export default function App() {
           <button className="back-button" onClick={goBack}>
             ← {t.back}
           </button>
-          <h1>
-            ⭐ {selected.stars.toLocaleString("en-US")} Stars
+          <h1 className="order-title">
+            <span className="order-title-star">⭐</span>
+            {selected.stars.toLocaleString("en-US")} Stars
           </h1>
           <p className="muted">STARS DROP</p>
           <div className="details-card">
