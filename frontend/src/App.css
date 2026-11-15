@@ -1226,3 +1226,26 @@ html, body {
     animation: none !important;
   }
 }
+
+/* EXTRA BRIGHT RED WITHDRAW BUTTON */
+.referral-withdraw-button,
+.referral-withdraw-button:disabled {
+  background: #ff1010 !important;
+  color: #111111 !important;
+  opacity: 1 !important;
+  filter: none !important;
+  border: none !important;
+  box-shadow: 0 0 12px rgba(255, 16, 16, 0.5) !important;
+  animation: referralBrightRedPulse 1.4s ease-in-out infinite !important;
+}
+
+@keyframes referralBrightRedPulse {
+  0%, 100% {
+    background: #ff1010;
+    box-shadow: 0 0 8px rgba(255, 16, 16, 0.45);
+  }
+  50% {
+    background: #ff3838;
+    box-shadow: 0 0 22px rgba(255, 16, 16, 0.75);
+  }
+}
