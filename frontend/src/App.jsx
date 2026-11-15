@@ -47,7 +47,8 @@ const words = {
     earned: "Усього зароблено",
     withdrawn: "Усього виведено",
     invite: "Твоє реферальне посилання",
-    copyLink: "Копіювати посилання",
+    copyLink: "Скопіювати",
+    shareLink: "Надіслати",
     copiedLink: "Посилання скопійовано!",
     withdrawInfo: "Мінімальне виведення — 100 ⭐",
     withdraw: "Вивести 100 ⭐",
@@ -81,7 +82,8 @@ const words = {
     earned: "Всего заработано",
     withdrawn: "Всего выведено",
     invite: "Твоя реферальная ссылка",
-    copyLink: "Копировать ссылку",
+    copyLink: "Копировать",
+    shareLink: "Отправить",
     copiedLink: "Ссылка скопирована!",
     withdrawInfo: "Минимальный вывод — 100 ⭐",
     withdraw: "Вывести 100 ⭐",
@@ -115,7 +117,8 @@ const words = {
     earned: "Total earned",
     withdrawn: "Total withdrawn",
     invite: "Your referral link",
-    copyLink: "Copy link",
+    copyLink: "Copy",
+    shareLink: "Share",
     copiedLink: "Link copied!",
     withdrawInfo: "Minimum withdrawal — 100 ⭐",
     withdraw: "Withdraw 100 ⭐",
@@ -223,6 +226,27 @@ export default function App() {
       setLinkCopied(true);
     } catch {
       alert(referralData.referralLink);
+    }
+  }
+
+
+  function shareReferralLink() {
+    if (!referralData?.referralLink) return;
+
+    const message = language === "UA"
+      ? "⭐ STARS DROP\\nОтримуй Telegram Stars швидко та вигідно!\\n🎁 Запрошуй друзів і отримуй 5 ⭐ за кожного."
+      : language === "RU"
+      ? "⭐ STARS DROP\\nПолучай Telegram Stars быстро и выгодно!\\n🎁 Приглашай друзей и получай 5 ⭐ за каждого."
+      : "⭐ STARS DROP\\nGet Telegram Stars quickly and at a great price!\\n🎁 Invite friends and get 5 ⭐ for each one.";
+
+    const shareUrl = "https://t.me/share/url?url=" +
+      encodeURIComponent(referralData.referralLink) +
+      "&text=" + encodeURIComponent(message);
+
+    if (window.Telegram?.WebApp?.openTelegramLink) {
+      window.Telegram.WebApp.openTelegramLink(shareUrl);
+    } else {
+      window.open(shareUrl, "_blank");
     }
   }
 
@@ -470,9 +494,14 @@ export default function App() {
               <div className="wallet-address referral-link">
                 {referralData.referralLink}
               </div>
-              <button className="primary-button" onClick={copyReferralLink}>
-                {linkCopied ? t.copiedLink : t.copyLink}
-              </button>
+              <div className="referral-actions">
+                <button className="primary-button" onClick={copyReferralLink}>
+                  {linkCopied ? t.copiedLink : t.copyLink}
+                </button>
+                <button className="primary-button" onClick={shareReferralLink}>
+                  {t.shareLink}
+                </button>
+              </div>
             </div>
             <div className="details-card">
               <p className="referral-info">{t.withdrawInfo}</p>
