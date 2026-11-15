@@ -83,9 +83,7 @@ export function createReferralGetHandler({ database, telegram, botToken }) { ret
     totalEarned: Number(account?.total_earned || 0),
     totalWithdrawn: Number(account?.total_withdrawn || 0),
     referralLink:
-      "https://t.me/" +
-      bot.result.username +
-      "?start=ref_" +
+      "https://stars-drop-backend.onrender.com/ref/" +
       user.id
   }));
 

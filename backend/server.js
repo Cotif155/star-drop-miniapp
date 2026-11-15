@@ -395,6 +395,56 @@ const server = createServer(async function(req, res) {
     }
     return;
   }
+
+  if (req.method === "GET" && req.url.startsWith("/ref/")) {
+    const referrerId = req.url.split("/")[2];
+
+    if (!/^\\d+$/.test(referrerId || "")) {
+      res.writeHead(400);
+      res.end("Invalid referral link");
+      return;
+    }
+
+    try {
+      const bot = await telegram("getMe", {});
+      if (!bot.ok || !bot.result?.username) {
+        throw new Error("Could not get bot username");
+      }
+
+      const deepLink = "https://t.me/" + bot.result.username +
+        "?start=ref_" + referrerId;
+      const imageUrl =
+        "https://stars-drop-shop.vercel.app/stars-drop-referral-preview.jpg";
+
+      res.writeHead(200, {
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": "no-cache"
+      });
+
+      res.end(`<!doctype html>
+<html><head>
+<meta charset="utf-8">
+<meta property="og:type" content="website">
+<meta property="og:title" content="⭐ STARS DROP">
+<meta property="og:description" content="Отримуй Telegram Stars швидко та вигідно! 🎁 Запрошуй друзів і отримуй 5 ⭐ за кожного.">
+<meta property="og:image" content="${imageUrl}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta http-equiv="refresh" content="0;url=${deepLink}">
+<title>STARS DROP</title>
+</head><body>
+<a href="${deepLink}">Відкрити STARS DROP</a>
+<script>window.location.replace(${JSON.stringify(deepLink)});</script>
+</body></html>`);
+    } catch (error) {
+      console.error("Referral preview error:", error);
+      res.writeHead(500);
+      res.end("Could not open referral link");
+    }
+    return;
+  }
+
   res.writeHead(404);
   res.end(JSON.stringify({ error: "Not found" }));
 });
