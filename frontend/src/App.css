@@ -1249,3 +1249,47 @@ html, body {
     box-shadow: 0 0 22px rgba(255, 16, 16, 0.75);
   }
 }
+
+/* DARK STAR BACKGROUND FOR REFERRAL PAGE */
+.referral-screen {
+  position: relative;
+  isolation: isolate;
+  background-color: #111318 !important;
+  background-image:
+    radial-gradient(circle, rgba(255, 220, 120, 0.95) 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.75) 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(255, 200, 80, 0.5) 1px, transparent 2px);
+  background-size: 97px 113px, 137px 149px, 181px 167px;
+  background-position: 12px 18px, 55px 72px, 90px 35px;
+  border-radius: 18px;
+  padding: 12px;
+}
+
+/* REFERRAL HOW IT WORKS CARD */
+.referral-how-card {
+  margin-top: 14px;
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(35, 38, 47, 0.96);
+  border: 1px solid rgba(255, 210, 100, 0.3);
+  color: #f4f4f4;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+}
+
+.referral-how-card h3 {
+  color: #ffd36b;
+  font-size: 17px;
+  margin: 0 0 14px;
+  font-weight: 850;
+}
+
+.referral-how-card p {
+  color: #eeeeee;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 10px 0;
+}
+
+.referral-how-card strong {
+  color: #ffd36b;
+}
