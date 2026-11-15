@@ -1320,3 +1320,57 @@ html, body {
   padding: 12px 0 !important;
 }
 
+
+/* MODERN BACK BUTTON ON REFERRAL PAGE */
+.referral-screen > .back-button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 9px 17px !important;
+  margin-top: 0 !important;
+  margin-bottom: 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  border-radius: 12px !important;
+  background: rgba(48, 52, 63, 0.92) !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 750 !important;
+  animation: none !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.referral-screen > .back-button:active {
+  transform: scale(0.96);
+  background: #626979 !important;
+}
+
+/* ANIMATED STAR NEXT TO STARS DROP */
+.brand-star {
+  display: inline-block;
+  transform-origin: center;
+  animation: brandStarJump 1.5s ease-in-out infinite;
+}
+
+@keyframes brandStarJump {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-3px) rotate(-10deg);
+  }
+  50% {
+    transform: translateY(0) rotate(8deg);
+  }
+  75% {
+    transform: translateY(-2px) rotate(-5deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-star {
+    animation: none !important;
+  }
+}
+

@@ -304,7 +304,7 @@ export default function App() {
   return (
     <div className={`app ${screen === "referral" ? "referral-mode" : ""}`}>
       <header className="topbar">
-        <div className="brand">⭐ STARS DROP</div>
+        <div className="brand"><span className="brand-star">⭐</span> STARS DROP</div>
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
