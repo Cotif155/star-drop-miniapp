@@ -2034,3 +2034,28 @@ html, body {
 .referral-menu-card .home-menu-icon {
   filter: none !important;
 }
+
+/* ===== FINAL FIX: CLEAN HOME MENU ICONS ===== */
+
+.home-menu-card .home-menu-icon,
+.stars-menu-card .home-menu-icon,
+.premium-menu-card .home-menu-icon,
+.referral-menu-card .home-menu-icon {
+  display: inline-block !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  animation: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+  mix-blend-mode: normal !important;
+}
+
+/* Keep gloss only on the card surface */
+.home-menu-card::before,
+.home-menu-card::after {
+  pointer-events: none;
+}
+
