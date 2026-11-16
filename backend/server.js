@@ -254,59 +254,84 @@ async function handleCallback(callback) {
 }
 async function handleOrder(req, res) {
   let body = "";
+
   for await (const chunk of req) {
     body += chunk;
   }
+
   try {
     const order = JSON.parse(body);
-    const stars = Number(order.stars);
-    if (!packages.includes(stars)) {
-      res.writeHead(400);
-      res.end(JSON.stringify({ error: "Invalid package" }));
-      return;
-    }
     const username = String(order.username || "Не вказаний");
     const userId = String(order.userId || "Не отриманий");
-    const message =
-      "⭐ STARS DROP\n\n" +
-      "Выплачено\n" +
-      "👤Username: @" + username + "\n" +
-      "🆔Telegram ID: " + userId + "\n" +
-      "⭐Пакет: " + stars + " Stars\n" +
-      "🤑Сума: " + prices[stars].toFixed(2) + " USDT\n" +
-      "👛Оплата: USDT (TON)";
+
+    let message = "";
+
+    if (order.type === "premium") {
+      const premiumPrices = {
+        3: 15,
+        6: 20,
+        12: 34
+      };
+
+      const months = Number(order.months);
+
+      if (!premiumPrices[months] || !order.userId) {
+        res.writeHead(400);
+        res.end(JSON.stringify({ error: "Invalid Premium order" }));
+        return;
+      }
+
+      const usernameLabel =
+        username === "Не вказаний" ? username : "@" + username;
+
+      message =
+        "⭐ STARS DROP — TELEGRAM PREMIUM\\n" +
+        "🕓 Очікує перевірки оплати та ручного підключення\\n\\n" +
+        "👤 Username: " + usernameLabel + "\\n" +
+        "🆔 Telegram ID: " + userId + "\\n" +
+        "💎 Підписка: " + months + " місяців\\n" +
+        "💰 Сума: " + premiumPrices[months].toFixed(2) + " USDT\\n" +
+        "👛 Оплата: USDT (TON)";
+    } else {
+      const stars = Number(order.stars);
+
+      if (!packages.includes(stars)) {
+        res.writeHead(400);
+        res.end(JSON.stringify({ error: "Invalid package" }));
+        return;
+      }
+
+      message =
+        "⭐ STARS DROP\\n\\n" +
+        "Выплачено\\n" +
+        "👤Username: @" + username + "\\n" +
+        "🆔Telegram ID: " + userId + "\\n" +
+        "⭐Пакет: " + stars + " Stars\\n" +
+        "🤑Сума: " + prices[stars].toFixed(2) + " USDT\\n" +
+        "👛Оплата: USDT (TON)";
+    }
 
     const result = await telegram("sendMessage", {
-
       chat_id: ADMIN_ID,
-
       text: message
-
     });
 
     if (!result.ok) {
-
       res.writeHead(502);
-
       res.end(JSON.stringify({ error: "Telegram error" }));
-
       return;
-
     }
 
     res.writeHead(200);
-
     res.end(JSON.stringify({ success: true }));
 
   } catch (error) {
-
+    console.error("Order error:", error);
     res.writeHead(400);
-
     res.end(JSON.stringify({ error: "Invalid request" }));
-
   }
-
 }
+
 const handleReferral = createReferralGetHandler({
   database,
   telegram,

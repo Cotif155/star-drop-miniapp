@@ -1619,3 +1619,92 @@ html, body {
     animation: none !important;
   }
 }
+
+
+/* ===== PREMIUM CATALOG BUTTONS ===== */
+.app.catalog-mode .catalog-action-row {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  margin: -8px auto 20px;
+}
+
+.app.catalog-mode .catalog-action-row .referral-open,
+.app.catalog-mode .catalog-action-row .premium-open {
+  width: 50% !important;
+  min-width: 0;
+  min-height: 54px;
+  margin: 0 !important;
+  padding: 10px 8px !important;
+  border: none !important;
+  border-radius: 15px !important;
+  font-size: 13px !important;
+  font-weight: 850 !important;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.app.catalog-mode .catalog-action-row .referral-open {
+  background: #25b85a !important;
+  color: #101810 !important;
+}
+
+.app.catalog-mode .catalog-action-row .premium-open {
+  background: linear-gradient(135deg, #7250d8, #a66af0) !important;
+  color: #fff !important;
+  box-shadow: 0 0 12px rgba(145, 90, 230, 0.35);
+  animation: premiumButtonPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes premiumButtonPulse {
+  0%, 100% { box-shadow: 0 0 7px rgba(145, 90, 230, 0.3); }
+  50% { box-shadow: 0 0 19px rgba(165, 110, 255, 0.65); }
+}
+
+/* ===== PREMIUM PLAN SCREEN ===== */
+.premium-screen > h1 {
+  color: #ffb34d !important;
+  text-align: center;
+  font-size: 23px;
+  font-weight: 900;
+}
+
+.premium-subtitle {
+  color: rgba(255,255,255,0.75);
+  text-align: center;
+  margin: 10px 0 24px;
+}
+
+.premium-plans {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.premium-plan-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 72px;
+  padding: 16px 19px;
+  border: 1px solid rgba(180, 140, 255, 0.45);
+  border-radius: 16px;
+  background: linear-gradient(120deg, #29213e, #40305e);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.premium-plan-button span {
+  color: #ffd27b;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app.catalog-mode .catalog-action-row .premium-open {
+    animation: none !important;
+  }
+}

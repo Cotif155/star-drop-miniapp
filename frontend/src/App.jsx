@@ -18,6 +18,12 @@ const packages = [
   { stars: 25000, usd: 487.50, old: 609 },
   { stars: 35000, usd: 682.50, old: 849 },
 ];
+const premiumPlans = [
+  { months: 3, usd: 15 },
+  { months: 6, usd: 20 },
+  { months: 12, usd: 34 },
+];
+
 const words = {
   UA: {
     title: "Каталог Stars",
@@ -40,6 +46,13 @@ const words = {
     savings: "Економія",
     reference: "Ціна Telegram",
     referral: "Реферальна програма",
+    premium: "Telegram Premium",
+    premiumTitle: "Обери підписку Telegram Premium",
+    premiumSubtitle: "Підписка для твого Telegram-акаунта",
+    months3: "3 місяці",
+    months6: "6 місяців",
+    months12: "12 місяців",
+    telegramRequired: "Відкрий STARS DROP через Telegram, щоб отримати твій Telegram ID.",
     reward: "Отримуй 5 ⭐ за кожного нового друга",
     loading: "Завантаження...",
     balance: "Твій баланс",
@@ -80,6 +93,13 @@ const words = {
     savings: "Экономия",
     reference: "Цена Telegram",
     referral: "Реферальная программа",
+    premium: "Telegram Premium",
+    premiumTitle: "Выбери подписку Telegram Premium",
+    premiumSubtitle: "Подписка для твоего Telegram-аккаунта",
+    months3: "3 месяца",
+    months6: "6 месяцев",
+    months12: "12 месяцев",
+    telegramRequired: "Открой STARS DROP через Telegram, чтобы получить свой Telegram ID.",
     reward: "Получай 5 ⭐ за каждого нового друга",
     loading: "Загрузка...",
     balance: "Твой баланс",
@@ -120,6 +140,13 @@ const words = {
     savings: "Savings",
     reference: "Telegram price",
     referral: "Referral program",
+    premium: "Telegram Premium",
+    premiumTitle: "Choose your Telegram Premium plan",
+    premiumSubtitle: "Subscription for your Telegram account",
+    months3: "3 months",
+    months6: "6 months",
+    months12: "12 months",
+    telegramRequired: "Open STARS DROP through Telegram to receive your Telegram ID.",
     reward: "Get 5 ⭐ for every new friend",
     loading: "Loading...",
     balance: "Your balance",
@@ -144,6 +171,7 @@ export default function App() {
   const [language, setLanguage] = useState("UA");
   const [screen, setScreen] = useState("catalog");
   const [selected, setSelected] = useState(null);
+  const [selectedPremium, setSelectedPremium] = useState(null);
   const [method, setMethod] = useState(null);
   const [copied, setCopied] = useState(false);
   const [sending, setSending] = useState(false);
@@ -208,6 +236,46 @@ export default function App() {
       setSending(false);
     }
   }
+  async function sendPremiumOrder() {
+    if (sending || !selectedPremium) return;
+
+    const telegramUser =
+      window.Telegram?.WebApp?.initDataUnsafe?.user;
+
+    if (!telegramUser?.id) {
+      alert(t.telegramRequired);
+      return;
+    }
+
+    setSending(true);
+
+    try {
+      const response = await fetch("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "premium",
+          months: selectedPremium.months,
+          method: "USDT_TON",
+          username: telegramUser.username || "Не вказаний",
+          userId: telegramUser.id
+        })
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Request failed");
+      }
+
+      alert(t.success);
+    } catch (error) {
+      console.error("Premium order error:", error);
+      alert(t.error);
+    } finally {
+      setSending(false);
+    }
+  }
+
   async function loadReferral() {
     setScreen("referral");
     setReferralLoading(true);
@@ -302,7 +370,7 @@ export default function App() {
     }
   }
   return (
-    <div className={`app ${screen === "referral" ? "referral-mode" : screen === "catalog" ? "catalog-mode" : screen === "order" ? "order-mode" : screen === "payment" ? "payment-mode" : ""}`}>
+    <div className={`app ${screen === "referral" ? "referral-mode" : screen === "catalog" ? "catalog-mode" : screen === "order" || screen === "premium" ? "order-mode" : screen === "payment" || screen === "premium-payment" ? "payment-mode" : ""}`}>
       <header className="topbar">
         <div className="brand"><span className="brand-star">⭐</span> STARS DROP</div>
         <select
@@ -320,12 +388,20 @@ export default function App() {
             <h1>{t.title}</h1>
             <p>{t.subtitle}</p>
           </section>
-          <button
-            className="secondary-button referral-open"
-            onClick={loadReferral}
-          >
-            <span className="star-animate">⭐</span> {t.referral}
-          </button>
+          <div className="catalog-action-row">
+            <button
+              className="secondary-button referral-open"
+              onClick={loadReferral}
+            >
+              <span className="star-animate">⭐</span> {t.referral}
+            </button>
+            <button
+              className="secondary-button premium-open"
+              onClick={() => setScreen("premium")}
+            >
+              💎 {t.premium}
+            </button>
+          </div>
 
           <div className="package-list">
             {packages.map((item) => (
@@ -464,6 +540,70 @@ export default function App() {
           </div>
         </section>
       )}
+
+    {screen === "premium" && (
+      <section className="content-screen premium-screen">
+        <button className="back-button" onClick={() => setScreen("catalog")}>
+          ← {t.back}
+        </button>
+        <h1>💎 {t.premiumTitle}</h1>
+        <p className="premium-subtitle">{t.premiumSubtitle}</p>
+        <div className="premium-plans">
+          {premiumPlans.map((plan) => (
+            <button
+              className="premium-plan-button"
+              key={plan.months}
+              onClick={() => {
+                setSelectedPremium(plan);
+                setCopied(false);
+                setScreen("premium-payment");
+              }}
+            >
+              <strong>
+                {plan.months === 3 ? t.months3 : plan.months === 6 ? t.months6 : t.months12}
+              </strong>
+              <span>${money(plan.usd)} USDT</span>
+            </button>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {screen === "premium-payment" && selectedPremium && (
+      <section className="content-screen">
+        <button className="back-button" onClick={() => setScreen("premium")}>
+          ← {t.back}
+        </button>
+        <h1>{t.payment}</h1>
+        <div className="details-card payment-details">
+          <div className="demo-label">{t.demo}</div>
+          <h2>💎 Telegram Premium</h2>
+          <div className="amount-label">
+            {selectedPremium.months === 3 ? t.months3 : selectedPremium.months === 6 ? t.months6 : t.months12}
+          </div>
+          <div className="amount-value">
+            {money(selectedPremium.usd)} USDT
+          </div>
+          <div className="network-notice">
+            <span>✓</span> {t.choose}
+          </div>
+          <div className="address-label">{t.address}</div>
+          <div className="wallet-address">{wallet}</div>
+          <button className="secondary-button" onClick={copyWallet}>
+            {copied ? t.copied : t.copy}
+          </button>
+          <button
+            className="primary-button large"
+            onClick={sendPremiumOrder}
+            disabled={sending}
+          >
+            {sending ? t.sending : t.paid}
+          </button>
+          <p className="demo-note">{t.note}</p>
+        </div>
+      </section>
+    )}
+
     {screen === "referral" && (
       <section className="content-screen referral-screen">
         <button className="back-button" onClick={() => setScreen("catalog")}>
