@@ -285,8 +285,25 @@ async function handleOrder(req, res) {
         username === "Не вказаний" ? username : "@" + username;
 
       message =
+        "⭐ STARS DROP — TELEGRAM PREMIUM\n" +
+        "☑️ Подключено\n\n" +
+        "👤 Username: " + usernameLabel + "\n" +
+        "🆔 Telegram ID: " + userId + "\n" +
+        "💎 Підписка: " + months + " місяців\n" +
+        "💰 Сума: " + premiumPrices[months].toFixed(2) + " USDT\n" +
+        "👛 Оплата: USDT (TON)";
+    } else {
+      const stars = Number(order.stars);
+
+      if (!packages.includes(stars)) {
+        res.writeHead(400);
+        res.end(JSON.stringify({ error: "Invalid package" }));
+        return;
+      }
+
+      message =
         "⭐ STARS DROP\n\n" +
-        "Выплачено\n" +
+        "Выплачено\n\n" +
         "👤 Username: @" + username + "\n" +
         "🆔 Telegram ID: " + userId + "\n" +
         "⭐ Пакет: " + stars + " Stars\n" +
