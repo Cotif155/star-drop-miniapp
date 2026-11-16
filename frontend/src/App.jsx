@@ -392,7 +392,7 @@ export default function App() {
       {screen === "catalog" && (
         <>
           <section className="hero home-hero">
-            <h1>⭐ STARS DROP</h1>
+            <h1><span className="home-hero-star">⭐</span> STARS DROP</h1>
             <p>{t.subtitle}</p>
           </section>
           <div className="home-menu-grid">
