@@ -1708,3 +1708,87 @@ html, body {
     animation: none !important;
   }
 }
+
+
+/* ===== STARS DROP HOME MENU ===== */
+.home-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+  margin: 0 auto 24px;
+}
+
+.home-menu-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  min-height: 195px;
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 22px;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.home-menu-card:active {
+  transform: scale(0.97);
+  filter: brightness(1.15);
+}
+
+.home-menu-icon {
+  font-size: 35px;
+  line-height: 1.2;
+}
+
+.home-menu-card strong {
+  font-size: 17px;
+  line-height: 1.25;
+  font-weight: 900;
+}
+
+.home-menu-card small {
+  font-size: 11px;
+  line-height: 1.4;
+  opacity: 0.82;
+}
+
+.stars-menu-card {
+  background: linear-gradient(145deg, #34313a, #17191f);
+  border-color: rgba(255, 207, 71, 0.45);
+  box-shadow: 0 5px 18px rgba(255, 190, 50, 0.12);
+}
+
+.premium-menu-card {
+  background: linear-gradient(145deg, #7650c9, #39235f);
+  border-color: rgba(190, 155, 255, 0.5);
+  box-shadow: 0 5px 18px rgba(145, 90, 230, 0.2);
+}
+
+.referral-menu-card {
+  background: linear-gradient(145deg, #1c9b50, #12532f);
+  border-color: rgba(100, 255, 155, 0.4);
+  box-shadow: 0 5px 18px rgba(37, 184, 90, 0.18);
+}
+
+.stars-catalog-screen {
+  width: 100%;
+}
+
+.stars-catalog-screen > .back-button {
+  margin-bottom: 18px;
+}
+
+@media (max-width: 360px) {
+  .home-menu-grid { gap: 10px; }
+  .home-menu-card {
+    min-height: 175px;
+    padding: 14px;
+  }
+  .home-menu-card strong { font-size: 15px; }
+}

@@ -365,12 +365,19 @@ export default function App() {
       setMethod(null);
     } else if (screen === "payment") {
       setScreen("order");
+    } else if (screen === "order") {
+      setScreen("stars");
     } else {
       setScreen("catalog");
     }
   }
   return (
-    <div className={`app ${screen === "referral" ? "referral-mode" : screen === "catalog" ? "catalog-mode" : screen === "order" || screen === "premium" ? "order-mode" : screen === "payment" || screen === "premium-payment" ? "payment-mode" : ""}`}>
+    <div className={`app ${
+      screen === "referral" ? "referral-mode" :
+      screen === "catalog" || screen === "stars" ? "catalog-mode" :
+      screen === "order" || screen === "premium" ? "order-mode" :
+      screen === "payment" || screen === "premium-payment" ? "payment-mode" : ""
+    }`}>
       <header className="topbar">
         <div className="brand"><span className="brand-star">⭐</span> STARS DROP</div>
         <select
@@ -384,25 +391,39 @@ export default function App() {
       </header>
       {screen === "catalog" && (
         <>
+          <section className="hero home-hero">
+            <h1>⭐ STARS DROP</h1>
+            <p>{t.subtitle}</p>
+          </section>
+          <div className="home-menu-grid">
+            <button className="home-menu-card stars-menu-card" onClick={() => setScreen("stars")}>
+              <span className="home-menu-icon">⭐</span>
+              <strong>Telegram Stars</strong>
+              <small>{t.subtitle}</small>
+            </button>
+            <button className="home-menu-card premium-menu-card" onClick={() => setScreen("premium")}>
+              <span className="home-menu-icon">💎</span>
+              <strong>{t.premium}</strong>
+              <small>{t.premiumSubtitle}</small>
+            </button>
+            <button className="home-menu-card referral-menu-card" onClick={loadReferral}>
+              <span className="home-menu-icon">🎁</span>
+              <strong>{t.referral}</strong>
+              <small>{t.reward}</small>
+            </button>
+          </div>
+        </>
+      )}
+
+      {screen === "stars" && (
+        <section className="stars-catalog-screen">
+          <button className="back-button" onClick={() => setScreen("catalog")}>
+            ← {t.back}
+          </button>
           <section className="hero">
             <h1>{t.title}</h1>
             <p>{t.subtitle}</p>
           </section>
-          <div className="catalog-action-row">
-            <button
-              className="secondary-button referral-open"
-              onClick={loadReferral}
-            >
-              <span className="star-animate">⭐</span> {t.referral}
-            </button>
-            <button
-              className="secondary-button premium-open"
-              onClick={() => setScreen("premium")}
-            >
-              💎 {t.premium}
-            </button>
-          </div>
-
           <div className="package-list">
             {packages.map((item) => (
               <div className="package-card" key={item.stars}>
@@ -442,7 +463,7 @@ export default function App() {
               </div>
             ))}
           </div>
-        </>
+        </section>
       )}
       {screen === "order" && selected && (
         <section className="content-screen">
