@@ -2083,3 +2083,55 @@ html, body {
   }
 }
 
+
+/* ===== FINAL HOME MENU DESIGN ===== */
+
+/* Remove the white radial spot from the card surface */
+.home-menu-card::before {
+  background: linear-gradient(
+    145deg,
+    rgba(255,255,255,0.30) 0%,
+    rgba(255,255,255,0.10) 30%,
+    transparent 65%,
+    rgba(255,255,255,0.08) 100%
+  ) !important;
+}
+
+/* Simple original emoji, no glow or shadow */
+.home-menu-card .home-menu-icon {
+  display: inline-block !important;
+  font-size: 39px !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  opacity: 1 !important;
+  animation: starsDropSimplePulse 1.3s ease-in-out infinite !important;
+  transform-origin: center center !important;
+  will-change: transform;
+}
+
+/* Visible smooth pulse for all three icons */
+@keyframes starsDropSimplePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+}
+
+/* Prevent old icon animations from overriding the new pulse */
+.stars-menu-card .home-menu-icon,
+.premium-menu-card .home-menu-icon,
+.referral-menu-card .home-menu-icon {
+  animation: starsDropSimplePulse 1.3s ease-in-out infinite !important;
+  filter: none !important;
+}
+
+/* Keep the moving glossy reflection on the card */
+.home-menu-card::after {
+  animation: homeCardShine 3.2s ease-in-out infinite !important;
+}
+
