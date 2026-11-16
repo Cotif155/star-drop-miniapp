@@ -2059,3 +2059,27 @@ html, body {
   pointer-events: none;
 }
 
+
+/* ===== CLEAN GLOSS + SIMPLE ICON PULSE ===== */
+
+.home-menu-card .home-menu-icon {
+  display: inline-block !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  animation: cleanIconPulse 1.5s ease-in-out infinite !important;
+  transform-origin: center center;
+  opacity: 1 !important;
+}
+
+@keyframes cleanIconPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
