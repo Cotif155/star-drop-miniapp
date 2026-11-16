@@ -2181,3 +2181,42 @@ html, body {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.22); }
 }
+
+/* ===== STARS DROP: FORCE HOME ICON PULSE ON IOS ===== */
+
+.home-hero .home-hero-star,
+.home-menu-card .home-menu-icon {
+  display: inline-block !important;
+  animation-name: starsDropIOSPulse !important;
+  animation-duration: 1.3s !important;
+  animation-timing-function: ease-in-out !important;
+  animation-iteration-count: infinite !important;
+  animation-fill-mode: both !important;
+  transform-origin: 50% 50% !important;
+  -webkit-animation-name: starsDropIOSPulse !important;
+  -webkit-animation-duration: 1.3s !important;
+  -webkit-animation-timing-function: ease-in-out !important;
+  -webkit-animation-iteration-count: infinite !important;
+}
+
+@keyframes starsDropIOSPulse {
+  0%, 100% {
+    transform: scale(1);
+    -webkit-transform: scale(1);
+  }
+  50% {
+    transform: scale(1.25);
+    -webkit-transform: scale(1.25);
+  }
+}
+
+@-webkit-keyframes starsDropIOSPulse {
+  0%, 100% {
+    transform: scale(1);
+    -webkit-transform: scale(1);
+  }
+  50% {
+    transform: scale(1.25);
+    -webkit-transform: scale(1.25);
+  }
+}
