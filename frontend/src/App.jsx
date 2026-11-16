@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 const wallets = {
-  USDT: "THAawvogg5GHzfGVMZoWLSWKXQGCNxLqSY",
+  USDT: "UQCJyWTilVY1vHFWpHqCBD_DnEuBEGJ4H0itRXiqBSRg9Ozd",
 };
 const packages = [
   { stars: 100, usd: 1.95, old: 2.39 },
