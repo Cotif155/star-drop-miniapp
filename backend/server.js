@@ -286,7 +286,7 @@ async function handleOrder(req, res) {
 
       message =
         "⭐ STARS DROP — TELEGRAM PREMIUM\\n" +
-        "🕓 Очікує перевірки оплати та ручного підключення\\n\\n" +
+        "☑️ Подключено\\n\\n" +
         "👤 Username: " + usernameLabel + "\\n" +
         "🆔 Telegram ID: " + userId + "\\n" +
         "💎 Підписка: " + months + " місяців\\n" +
