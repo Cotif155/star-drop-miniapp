@@ -1792,3 +1792,118 @@ html, body {
   }
   .home-menu-card strong { font-size: 15px; }
 }
+
+/* ===== GLOSSY HOME MENU CARDS ===== */
+.home-menu-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transform: translateZ(0);
+}
+
+.home-menu-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      125deg,
+      rgba(255,255,255,0.28) 0%,
+      rgba(255,255,255,0.10) 22%,
+      transparent 48%,
+      rgba(255,255,255,0.07) 75%,
+      transparent 100%
+    );
+}
+
+.home-menu-card::after {
+  content: "";
+  position: absolute;
+  top: -80%;
+  left: -65%;
+  width: 45%;
+  height: 260%;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.22),
+    transparent
+  );
+  transform: rotate(28deg);
+  animation: homeCardShine 5s ease-in-out infinite;
+}
+
+.home-menu-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes homeCardShine {
+  0%, 55% { left: -65%; }
+  100% { left: 140%; }
+}
+
+/* STARS: PULSING AND BOUNCING */
+.stars-menu-card .home-menu-icon {
+  display: inline-block;
+  transform-origin: center;
+  animation: starsIconBounce 1.5s ease-in-out infinite;
+}
+
+@keyframes starsIconBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  45% { transform: translateY(-9px) scale(1.16); }
+  65% { transform: translateY(0) scale(0.96); }
+}
+
+/* PREMIUM: ROTATING DIAMOND WITH POP EFFECT */
+.premium-menu-card .home-menu-icon {
+  display: inline-block;
+  transform-origin: center;
+  animation: premiumDiamondPop 2.2s ease-in-out infinite;
+}
+
+@keyframes premiumDiamondPop {
+  0%, 100% { transform: perspective(300px) rotateY(0deg) scale(1); }
+  35% { transform: perspective(300px) rotateY(180deg) scale(1.28); }
+  60% { transform: perspective(300px) rotateY(300deg) scale(1.12); }
+}
+
+/* REFERRAL: PULSING GIFT */
+.referral-menu-card .home-menu-icon {
+  display: inline-block;
+  transform-origin: center;
+  animation: referralGiftPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes referralGiftPulse {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  35% { transform: scale(1.2) rotate(-8deg); }
+  65% { transform: scale(1.12) rotate(8deg); }
+}
+
+/* REFERRAL REWARD STAR */
+.referral-moving-star {
+  animation: referralRewardStarPulse 1.15s ease-in-out infinite !important;
+}
+
+@keyframes referralRewardStarPulse {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.35) rotate(18deg); }
+}
+
+/* ACCESSIBILITY */
+@media (prefers-reduced-motion: reduce) {
+  .home-menu-card::after,
+  .stars-menu-card .home-menu-icon,
+  .premium-menu-card .home-menu-icon,
+  .referral-menu-card .home-menu-icon,
+  .referral-moving-star {
+    animation: none !important;
+  }
+}
