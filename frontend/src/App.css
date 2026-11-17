@@ -2315,3 +2315,14 @@ html, body {
     -webkit-transform: scale(1.22);
   }
 }
+
+/* FORCE THE SAME SIMPLE PULSE ON ALL HOME ICONS */
+.home-menu-grid .home-menu-card.stars-menu-card > .home-menu-icon,
+.home-menu-grid .home-menu-card.premium-menu-card > .home-menu-icon,
+.home-menu-grid .home-menu-card.referral-menu-card > .home-menu-icon {
+  animation: starsDropSimplePulseFinal 1.5s ease-in-out infinite !important;
+  -webkit-animation: starsDropSimplePulseFinal 1.5s ease-in-out infinite !important;
+  transform-origin: center center !important;
+  -webkit-transform-origin: center center !important;
+}
+
