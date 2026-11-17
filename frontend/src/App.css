@@ -2441,3 +2441,86 @@ html, body {
   font-weight: 900 !important;
 }
 
+
+/* DAILY STARS: MODERN BACK BUTTON */
+.daily-stars-screen > .back-button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 9px 17px !important;
+  margin-top: -5px !important;
+  margin-bottom: 26px !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  border-radius: 12px !important;
+  background: rgba(48, 52, 63, 0.92) !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  animation: none !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.daily-stars-screen > .back-button:active {
+  transform: scale(0.96);
+  background: #626979 !important;
+}
+
+
+/* DAILY STARS: CENTERED BRAND */
+.app.daily-stars-mode .topbar {
+  position: relative;
+  justify-content: flex-end;
+  min-height: 40px;
+}
+
+.app.daily-stars-mode .brand {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ffd447 !important;
+  font-size: 25px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1px !important;
+  white-space: nowrap;
+  text-shadow: 0 0 10px rgba(255, 204, 55, 0.35);
+}
+
+.app.daily-stars-mode .topbar select {
+  position: relative;
+  z-index: 2;
+}
+
+/* DAILY STARS: GREY REWARD HEADER */
+.daily-stars-hero {
+  background: linear-gradient(145deg, #343943, #252a33) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 18px !important;
+  padding: 22px 18px !important;
+  margin-top: 0 !important;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.22) !important;
+}
+
+.daily-stars-hero h1 {
+  margin-top: 0;
+  color: #ffd34e !important;
+}
+
+
+/* DAILY STARS: FLOATING HERO STAR */
+.daily-stars-hero-star {
+  display: inline-block;
+  animation: dailyRewardStarFloat 1.8s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes dailyRewardStarFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(12deg);
+  }
+}
+

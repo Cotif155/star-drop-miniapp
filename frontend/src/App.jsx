@@ -786,7 +786,7 @@ export default function App() {
           ← {t.back}
         </button>
         <section className="hero daily-stars-hero">
-          <h1>⭐ {t.dailyTitle}</h1>
+          <h1><span className="daily-stars-hero-star">⭐</span> {t.dailyTitle}</h1>
           <p>{t.dailySubtitle}</p>
         </section>
 
