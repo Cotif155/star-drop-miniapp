@@ -2325,3 +2325,119 @@ html, body {
   -webkit-transform-origin: center center !important;
 }
 
+
+/* ===== DAILY FREE STARS ===== */
+
+.daily-stars-menu-card {
+  background: linear-gradient(145deg, #fff8cf 0%, #ffdf62 55%, #ffc928 100%) !important;
+  border: 1px solid #e9b72c !important;
+  color: #392900 !important;
+  box-shadow: 0 5px 18px rgba(210, 157, 20, 0.18) !important;
+}
+
+.daily-stars-menu-card strong,
+.daily-stars-menu-card small {
+  color: #392900 !important;
+}
+
+.daily-stars-menu-card > .home-menu-icon {
+  animation: starsDropSimplePulseFinal 1.5s ease-in-out infinite !important;
+  -webkit-animation: starsDropSimplePulseFinal 1.5s ease-in-out infinite !important;
+}
+
+.daily-stars-mode {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 205, 58, 0.16), transparent 55%),
+    #111111 !important;
+}
+
+.daily-stars-screen {
+  padding-bottom: 30px;
+}
+
+.daily-stars-hero h1 {
+  color: #ffd34e !important;
+  text-align: center;
+  font-weight: 900;
+}
+
+.daily-stars-hero p {
+  color: #ffffff !important;
+  text-align: center;
+}
+
+.daily-stars-screen .details-card {
+  background: #202020;
+  border: 1px solid rgba(255, 211, 78, 0.2);
+  color: #ffffff;
+}
+
+.daily-stars-balance-card {
+  text-align: center;
+}
+
+.daily-stars-balance {
+  margin-top: 10px;
+  color: #ffd34e;
+  font-size: 42px;
+  line-height: 1.2;
+  font-weight: 900;
+}
+
+.daily-stars-balance span {
+  display: inline-block;
+}
+
+.daily-stars-claim-card {
+  text-align: center;
+  padding: 28px 20px !important;
+}
+
+.daily-stars-big-icon {
+  font-size: 54px;
+  animation: starsDropSimplePulseFinal 1.5s ease-in-out infinite;
+}
+
+.daily-stars-claim-card h2 {
+  color: #ffd34e;
+  font-size: 27px;
+  margin: 12px 0 8px;
+}
+
+.daily-stars-claim-card p,
+.daily-stars-withdraw-card p {
+  color: #e8e8e8;
+  line-height: 1.5;
+}
+
+.daily-stars-countdown {
+  margin: 14px 0;
+  color: #ffd34e;
+  font-size: 30px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 2px;
+}
+
+.daily-stars-claim-button {
+  background: linear-gradient(135deg, #ffe78a, #ffc629) !important;
+  color: #332400 !important;
+  border: none !important;
+  font-weight: 900 !important;
+}
+
+.daily-stars-claim-button:disabled,
+.daily-stars-withdraw-button:disabled {
+  opacity: 0.4 !important;
+}
+
+.daily-stars-withdraw-card {
+  text-align: center;
+}
+
+.daily-stars-withdraw-button {
+  background: #ffd34e !important;
+  color: #332400 !important;
+  font-weight: 900 !important;
+}
+

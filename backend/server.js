@@ -3,6 +3,7 @@ import {
   createReferralGetHandler,
   createReferralWithdrawHandler
 } from "./referrals.js";
+import { createDailyStarsHandlers } from "./daily-stars.js";
 try {
   process.loadEnvFile(".env");
 } catch {}
@@ -344,6 +345,13 @@ const handleReferralWithdraw = createReferralWithdrawHandler({
   botToken: BOT_TOKEN,
   adminId: ADMIN_ID
 });
+const dailyStars = createDailyStarsHandlers({
+  database,
+  telegram,
+  botToken: BOT_TOKEN,
+  adminId: ADMIN_ID
+});
+
 const server = createServer(async function(req, res) {
 
   res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -390,6 +398,21 @@ const server = createServer(async function(req, res) {
     await handleReferralWithdraw(req, res);
     return;
   }
+  if (req.method === "POST" && req.url === "/api/daily-stars") {
+    await dailyStars.status(req, res);
+    return;
+  }
+
+  if (req.method === "POST" && req.url === "/api/daily-stars/claim") {
+    await dailyStars.claim(req, res);
+    return;
+  }
+
+  if (req.method === "POST" && req.url === "/api/daily-stars/withdraw") {
+    await dailyStars.withdraw(req, res);
+    return;
+  }
+
   if (req.method === "POST" && req.url === "/telegram-webhook") {
     if (
       !WEBHOOK_SECRET ||

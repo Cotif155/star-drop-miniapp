@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 const wallets = {
   USDT: "UQCJyWTilVY1vHFWpHqCBD_DnEuBEGJ4H0itRXiqBSRg9Ozd",
@@ -71,6 +71,22 @@ const words = {
     how2: "2. Друзі переходять за вашим посиланням і реєструються в STARS DROP.",
     how3: "3. За кожного нового запрошеного друга ви отримуєте 5 ⭐.",
     how4: "4. Коли назбираєте 100 ⭐, зможете подати заявку на виведення.",
+    dailyCard: "Забрати безкоштовно 5 зірок кожні 24 години",
+    dailyTitle: "Щоденна нагорода",
+    dailySubtitle: "Отримуй 5 безкоштовних ⭐ кожні 24 години",
+    dailyBalance: "Твій баланс нагород",
+    dailyClaim: "Забрати",
+    dailyClaimed: "5 ⭐ зараховано на твій баланс!",
+    dailyWait: "Наступна нагорода через",
+    dailyAvailable: "Нагорода вже доступна!",
+    dailyWithdrawInfo: "Виведення доступне тільки при балансі рівно 1000 ⭐",
+    dailyWithdraw: "Вивести 1000 ⭐",
+    dailyWithdrawSuccess: "Заявку на виведення 1000 ⭐ надіслано!",
+    dailyWithdrawError: "Не вдалося подати заявку на виведення.",
+    dailyLoading: "Завантаження нагороди...",
+    dailyHours: "год",
+    dailyMinutes: "хв",
+    dailySeconds: "сек",
   },
   RU: {
     title: "Каталог Stars",
@@ -118,6 +134,22 @@ const words = {
     how2: "2. Друзья переходят по вашей ссылке и регистрируются в STARS DROP.",
     how3: "3. За каждого нового приглашённого друга вы получаете 5 ⭐.",
     how4: "4. Когда накопите 100 ⭐, сможете подать заявку на вывод.",
+    dailyCard: "Забрать бесплатно 5 звёзд каждые 24 часа",
+    dailyTitle: "Ежедневная награда",
+    dailySubtitle: "Получай 5 бесплатных ⭐ каждые 24 часа",
+    dailyBalance: "Твой баланс наград",
+    dailyClaim: "Забрать",
+    dailyClaimed: "5 ⭐ зачислено на твой баланс!",
+    dailyWait: "Следующая награда через",
+    dailyAvailable: "Награда уже доступна!",
+    dailyWithdrawInfo: "Вывод доступен только при балансе ровно 1000 ⭐",
+    dailyWithdraw: "Вывести 1000 ⭐",
+    dailyWithdrawSuccess: "Заявка на вывод 1000 ⭐ отправлена!",
+    dailyWithdrawError: "Не удалось подать заявку на вывод.",
+    dailyLoading: "Загрузка награды...",
+    dailyHours: "ч",
+    dailyMinutes: "мин",
+    dailySeconds: "сек",
   },
   EN: {
     title: "Stars Catalog",
@@ -165,6 +197,22 @@ const words = {
     how2: "2. Friends follow your link and register in STARS DROP.",
     how3: "3. You receive 5 ⭐ for every new friend you invite.",
     how4: "4. Once you collect 100 ⭐, you can submit a withdrawal request.",
+    dailyCard: "Claim 5 free stars every 24 hours",
+    dailyTitle: "Daily reward",
+    dailySubtitle: "Get 5 free ⭐ every 24 hours",
+    dailyBalance: "Your reward balance",
+    dailyClaim: "Claim",
+    dailyClaimed: "5 ⭐ added to your balance!",
+    dailyWait: "Next reward available in",
+    dailyAvailable: "Your reward is available!",
+    dailyWithdrawInfo: "Withdrawal is available only when your balance is exactly 1000 ⭐",
+    dailyWithdraw: "Withdraw 1000 ⭐",
+    dailyWithdrawSuccess: "Your 1000 ⭐ withdrawal request has been sent!",
+    dailyWithdrawError: "Could not submit the withdrawal request.",
+    dailyLoading: "Loading reward...",
+    dailyHours: "h",
+    dailyMinutes: "m",
+    dailySeconds: "s",
   },
 };
 export default function App() {
@@ -179,8 +227,30 @@ export default function App() {
   const [referralLoading, setReferralLoading] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
+  const [dailyData, setDailyData] = useState(null);
+  const [dailyLoading, setDailyLoading] = useState(false);
+  const [dailyClaimLoading, setDailyClaimLoading] = useState(false);
+  const [dailyWithdrawLoading, setDailyWithdrawLoading] = useState(false);
+  const [dailyNow, setDailyNow] = useState(Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => setDailyNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
   const t = words[language];
   const wallet = wallets.USDT;
+  const dailyRemaining = dailyData?.next_claim_at
+    ? Math.max(0, new Date(dailyData.next_claim_at).getTime() - dailyNow)
+    : 0;
+  const dailyCountdown = [
+    Math.floor(dailyRemaining / 3600000),
+    Math.floor((dailyRemaining % 3600000) / 60000),
+    Math.floor((dailyRemaining % 60000) / 1000)
+  ].map((value) => String(value).padStart(2, "0")).join(":");
+  const dailyCanClaim = Boolean(dailyData?.can_claim) || (
+    dailyData?.next_claim_at &&
+    dailyRemaining <= 0
+  );
   const money = (value) => Number(value).toFixed(2);
   async function copyWallet() {
     try {
@@ -359,6 +429,85 @@ export default function App() {
       setWithdrawLoading(false);
     }
   }
+  async function loadDailyStars() {
+    setScreen("daily-stars");
+    setDailyLoading(true);
+    try {
+      const response = await fetch("/api/daily-stars", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          initData: window.Telegram?.WebApp?.initData || ""
+        })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Daily reward request failed");
+      setDailyData(result);
+    } catch (error) {
+      console.error("Daily stars status error:", error);
+      setDailyData(null);
+      alert(t.error);
+    } finally {
+      setDailyLoading(false);
+    }
+  }
+
+  async function claimDailyStars() {
+    if (dailyClaimLoading || !dailyCanClaim) return;
+    setDailyClaimLoading(true);
+    try {
+      const response = await fetch("/api/daily-stars/claim", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          initData: window.Telegram?.WebApp?.initData || ""
+        })
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        await loadDailyStars();
+        throw new Error(result.error || "Daily claim failed");
+      }
+      setDailyData(result);
+      alert(t.dailyClaimed);
+    } catch (error) {
+      console.error("Daily stars claim error:", error);
+      if (error.message !== "cooldown") alert(t.error);
+    } finally {
+      setDailyClaimLoading(false);
+    }
+  }
+
+  async function withdrawDailyStars() {
+    if (dailyWithdrawLoading || Number(dailyData?.balance) !== 1000) return;
+    setDailyWithdrawLoading(true);
+    try {
+      const response = await fetch("/api/daily-stars/withdraw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          initData: window.Telegram?.WebApp?.initData || ""
+        })
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Daily withdrawal failed");
+      }
+      setDailyData((previous) => ({
+        ...previous,
+        balance: 0,
+        can_claim: false
+      }));
+      alert(t.dailyWithdrawSuccess);
+      await loadDailyStars();
+    } catch (error) {
+      console.error("Daily stars withdrawal error:", error);
+      alert(t.dailyWithdrawError);
+    } finally {
+      setDailyWithdrawLoading(false);
+    }
+  }
+
   function goBack() {
     setCopied(false);
     if (method) {
@@ -374,6 +523,7 @@ export default function App() {
   return (
     <div className={`app ${
       screen === "referral" ? "referral-mode" :
+      screen === "daily-stars" ? "daily-stars-mode" :
       screen === "catalog" || screen === "stars" ? "catalog-mode" :
       screen === "order" || screen === "premium" ? "order-mode" :
       screen === "payment" || screen === "premium-payment" ? "payment-mode" : ""
@@ -410,6 +560,11 @@ export default function App() {
               <span className="home-menu-icon">🎁</span>
               <strong>{t.referral}</strong>
               <small>{t.reward}</small>
+            </button>
+            <button className="home-menu-card daily-stars-menu-card" onClick={loadDailyStars}>
+              <span className="home-menu-icon">⭐</span>
+              <strong>{t.dailyCard}</strong>
+              <small>{t.dailySubtitle}</small>
             </button>
           </div>
         </>
@@ -622,6 +777,67 @@ export default function App() {
           </button>
           <p className="demo-note">{t.note}</p>
         </div>
+      </section>
+    )}
+
+    {screen === "daily-stars" && (
+      <section className="content-screen daily-stars-screen">
+        <button className="back-button" onClick={() => setScreen("catalog")}>
+          ← {t.back}
+        </button>
+        <section className="hero daily-stars-hero">
+          <h1>⭐ {t.dailyTitle}</h1>
+          <p>{t.dailySubtitle}</p>
+        </section>
+
+        {dailyLoading ? (
+          <div className="details-card">
+            <p>{t.dailyLoading}</p>
+          </div>
+        ) : dailyData ? (
+          <>
+            <div className="details-card daily-stars-balance-card">
+              <div className="address-label">{t.dailyBalance}</div>
+              <div className="daily-stars-balance">
+                {dailyData.balance || 0} <span>⭐</span>
+              </div>
+            </div>
+
+            <div className="details-card daily-stars-claim-card">
+              <div className="daily-stars-big-icon">⭐</div>
+              <h2>+5 Stars</h2>
+              <p>{dailyCanClaim ? t.dailyAvailable : t.dailyWait}</p>
+              {!dailyCanClaim && (
+                <div className="daily-stars-countdown">{dailyCountdown}</div>
+              )}
+              <button
+                className="primary-button large daily-stars-claim-button"
+                onClick={claimDailyStars}
+                disabled={!dailyCanClaim || dailyClaimLoading}
+              >
+                {dailyClaimLoading ? t.loading : t.dailyClaim}
+              </button>
+            </div>
+
+            <div className="details-card daily-stars-withdraw-card">
+              <p>{t.dailyWithdrawInfo}</p>
+              <button
+                className="primary-button large daily-stars-withdraw-button"
+                onClick={withdrawDailyStars}
+                disabled={dailyWithdrawLoading || Number(dailyData.balance) !== 1000}
+              >
+                {dailyWithdrawLoading ? t.loading : t.dailyWithdraw}
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className="details-card">
+            <p>{t.error}</p>
+            <button className="primary-button" onClick={loadDailyStars}>
+              {language === "RU" ? "Попробовать снова" : language === "EN" ? "Try again" : "Спробувати ще раз"}
+            </button>
+          </div>
+        )}
       </section>
     )}
 
