@@ -2287,3 +2287,31 @@ html, body {
   35% { -webkit-transform: scale(1.23) rotate(-9deg); }
   65% { -webkit-transform: scale(1.12) rotate(9deg); }
 }
+
+/* FINAL SIMPLE PULSE FOR ALL THREE HOME ICONS */
+.home-menu-grid .home-menu-card > .home-menu-icon {
+  display: inline-block !important;
+  animation: starsDropSimplePulseFinal 1.5s ease-in-out infinite !important;
+  -webkit-animation: starsDropSimplePulseFinal 1.5s ease-in-out infinite !important;
+  transform-origin: center center !important;
+  -webkit-transform-origin: center center !important;
+  will-change: transform;
+}
+
+@keyframes starsDropSimplePulseFinal {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.22);
+  }
+}
+
+@-webkit-keyframes starsDropSimplePulseFinal {
+  0%, 100% {
+    -webkit-transform: scale(1);
+  }
+  50% {
+    -webkit-transform: scale(1.22);
+  }
+}
