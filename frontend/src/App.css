@@ -2048,7 +2048,6 @@ html, body {
   box-shadow: none !important;
   background: transparent !important;
   animation: none !important;
-  transform: none !important;
   opacity: 1 !important;
   mix-blend-mode: normal !important;
 }
