@@ -2220,3 +2220,70 @@ html, body {
     -webkit-transform: scale(1.25);
   }
 }
+
+/* RESTORE ORIGINAL SEPARATE HOME MENU ICON ANIMATIONS */
+.home-menu-grid .home-menu-card > .home-menu-icon {
+  display: inline-block !important;
+  opacity: 1 !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  transform-origin: center center !important;
+  -webkit-transform-origin: center center !important;
+  will-change: transform;
+}
+
+.home-menu-grid .home-menu-card.stars-menu-card > .home-menu-icon {
+  animation: starsDropOriginalStar 1.5s ease-in-out infinite !important;
+  -webkit-animation: starsDropOriginalStar 1.5s ease-in-out infinite !important;
+}
+
+.home-menu-grid .home-menu-card.premium-menu-card > .home-menu-icon {
+  animation: starsDropOriginalDiamond 2.8s ease-in-out infinite !important;
+  -webkit-animation: starsDropOriginalDiamond 2.8s ease-in-out infinite !important;
+}
+
+.home-menu-grid .home-menu-card.referral-menu-card > .home-menu-icon {
+  animation: starsDropOriginalGift 1.4s ease-in-out infinite !important;
+  -webkit-animation: starsDropOriginalGift 1.4s ease-in-out infinite !important;
+}
+
+@keyframes starsDropOriginalStar {
+  0%, 100% { transform: translateY(0) scale(1); }
+  45% { transform: translateY(-9px) scale(1.2); }
+  65% { transform: translateY(0) scale(0.97); }
+}
+
+@-webkit-keyframes starsDropOriginalStar {
+  0%, 100% { -webkit-transform: translateY(0) scale(1); }
+  45% { -webkit-transform: translateY(-9px) scale(1.2); }
+  65% { -webkit-transform: translateY(0) scale(0.97); }
+}
+
+@keyframes starsDropOriginalDiamond {
+  0%, 100% { transform: perspective(450px) rotateX(12deg) rotateY(-22deg) scale(1); }
+  25% { transform: perspective(450px) rotateX(-18deg) rotateY(24deg) scale(1.24); }
+  50% { transform: perspective(450px) rotateX(18deg) rotateY(-24deg) scale(1.12); }
+  75% { transform: perspective(450px) rotateX(-10deg) rotateY(20deg) scale(1.2); }
+}
+
+@-webkit-keyframes starsDropOriginalDiamond {
+  0%, 100% { -webkit-transform: perspective(450px) rotateX(12deg) rotateY(-22deg) scale(1); }
+  25% { -webkit-transform: perspective(450px) rotateX(-18deg) rotateY(24deg) scale(1.24); }
+  50% { -webkit-transform: perspective(450px) rotateX(18deg) rotateY(-24deg) scale(1.12); }
+  75% { -webkit-transform: perspective(450px) rotateX(-10deg) rotateY(20deg) scale(1.2); }
+}
+
+@keyframes starsDropOriginalGift {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  35% { transform: scale(1.23) rotate(-9deg); }
+  65% { transform: scale(1.12) rotate(9deg); }
+}
+
+@-webkit-keyframes starsDropOriginalGift {
+  0%, 100% { -webkit-transform: scale(1) rotate(0deg); }
+  35% { -webkit-transform: scale(1.23) rotate(-9deg); }
+  65% { -webkit-transform: scale(1.12) rotate(9deg); }
+}
