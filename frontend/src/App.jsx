@@ -263,56 +263,66 @@ export default function App() {
 
   }
 
-  async function sendOrder() {
+  function openXrocketPayment(paymentUrl) {
+    if (!paymentUrl) {
+      throw new Error("Payment link missing");
+    }
 
-   if (sending || !selected || !method) return;
+    const webApp = window.Telegram?.WebApp;
+
+    if (paymentUrl.includes("t.me/") && webApp?.openTelegramLink) {
+      webApp.openTelegramLink(paymentUrl);
+    } else if (webApp?.openLink) {
+      webApp.openLink(paymentUrl);
+    } else {
+      window.open(paymentUrl, "_blank");
+    }
+  }
+
+  async function sendOrder() {
+    if (sending || !selected) return;
+
+    const initData = window.Telegram?.WebApp?.initData;
+
+    if (!initData) {
+      alert(t.telegramRequired);
+      return;
+    }
 
     setSending(true);
 
     try {
-
-      const telegramUser =
-
-        window.Telegram?.WebApp?.initDataUnsafe?.user;
-
       const response = await fetch("/api/order", {
-
         method: "POST",
-
-        headers: {
-
-          "Content-Type": "application/json",
-
-        },
-
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-
+          type: "stars",
           stars: selected.stars,
-
-          method: "USDT_TON",
-          username: telegramUser?.username || "Не вказаний",
-          userId: telegramUser?.id || "Не отриманий",
-        }),
+          initData
+        })
       });
+
       const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.error || "Request failed");
+
+      if (!response.ok || !result.paymentUrl) {
+        throw new Error(result.error || "Could not create payment");
       }
-      alert(t.success);
+
+      openXrocketPayment(result.paymentUrl);
     } catch (error) {
-      console.error("Order error:", error);
+      console.error("Stars order error:", error);
       alert(t.error);
     } finally {
       setSending(false);
     }
   }
+
   async function sendPremiumOrder() {
     if (sending || !selectedPremium) return;
 
-    const telegramUser =
-      window.Telegram?.WebApp?.initDataUnsafe?.user;
+    const initData = window.Telegram?.WebApp?.initData;
 
-    if (!telegramUser?.id) {
+    if (!initData) {
       alert(t.telegramRequired);
       return;
     }
@@ -326,18 +336,17 @@ export default function App() {
         body: JSON.stringify({
           type: "premium",
           months: selectedPremium.months,
-          method: "USDT_TON",
-          username: telegramUser.username || "Не вказаний",
-          userId: telegramUser.id
+          initData
         })
       });
 
       const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.error || "Request failed");
+
+      if (!response.ok || !result.paymentUrl) {
+        throw new Error(result.error || "Could not create payment");
       }
 
-      alert(t.success);
+      openXrocketPayment(result.paymentUrl);
     } catch (error) {
       console.error("Premium order error:", error);
       alert(t.error);
@@ -686,37 +695,24 @@ export default function App() {
           </button>
           <h1>{t.payment}</h1>
           <div className="details-card payment-details">
-            <div className="demo-label">{t.demo}</div>
             <h2>USDT</h2>
             <div className="amount-label">{t.amount}</div>
             <div className="amount-value">
               {money(selected.usd)} USDT
             </div>
             <div className="network-notice">
-              <span>✓</span> {t.choose}
+              <span>✓</span> USDT — TRON (TRC20)
             </div>
-            <div className="address-label">{t.address}</div>
-            <div className="wallet-address">
-              {wallet}
-            </div>
-            <button
-              className="secondary-button"
-              onClick={copyWallet}
-            >
-              {copied ? t.copied : t.copy}
-            </button>
             <button
               className="primary-button large"
               onClick={sendOrder}
               disabled={sending}
             >
-              {sending ? t.sending : t.paid}
+              {sending ? t.sending : "Перейти до оплати"}
             </button>
-            <p className="demo-note">{t.note}</p>
           </div>
         </section>
       )}
-
     {screen === "premium" && (
       <section className="content-screen premium-screen">
         <button className="back-button" onClick={() => setScreen("catalog")}>
@@ -752,7 +748,6 @@ export default function App() {
         </button>
         <h1>{t.payment}</h1>
         <div className="details-card payment-details">
-          <div className="demo-label">{t.demo}</div>
           <h2>💎 Telegram Premium</h2>
           <div className="amount-label">
             {selectedPremium.months === 3 ? t.months3 : selectedPremium.months === 6 ? t.months6 : t.months12}
@@ -761,25 +756,18 @@ export default function App() {
             {money(selectedPremium.usd)} USDT
           </div>
           <div className="network-notice">
-            <span>✓</span> {t.choose}
+            <span>✓</span> USDT — TRON (TRC20)
           </div>
-          <div className="address-label">{t.address}</div>
-          <div className="wallet-address">{wallet}</div>
-          <button className="secondary-button" onClick={copyWallet}>
-            {copied ? t.copied : t.copy}
-          </button>
           <button
             className="primary-button large"
             onClick={sendPremiumOrder}
             disabled={sending}
           >
-            {sending ? t.sending : t.paid}
+            {sending ? t.sending : "Перейти до оплати"}
           </button>
-          <p className="demo-note">{t.note}</p>
         </div>
       </section>
     )}
-
     {screen === "daily-stars" && (
       <section className="content-screen daily-stars-screen">
         <button className="back-button" onClick={() => setScreen("catalog")}>

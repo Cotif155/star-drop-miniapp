@@ -1,7 +1,9 @@
 import { createServer } from "node:http";
+import { createHmac, timingSafeEqual, randomUUID } from "node:crypto";
 import {
   createReferralGetHandler,
-  createReferralWithdrawHandler
+  createReferralWithdrawHandler,
+  verifyTelegramInitData
 } from "./referrals.js";
 import { createDailyStarsHandlers } from "./daily-stars.js";
 try {
@@ -12,6 +14,9 @@ const ADMIN_ID = String(process.env.ADMIN_ID || "");
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET;
+const XROCKET_API_TOKEN = process.env.XROCKET_API_TOKEN;
+const XROCKET_WEBHOOK_SECRET = process.env.XROCKET_WEBHOOK_SECRET;
+const XROCKET_API_BASE = "https://" + "pay.api." + "xrocket.exchange";
 const PORT = process.env.PORT || 3001;
 const packages = [
   100, 150, 250, 350, 500, 750, 1000,
@@ -258,78 +263,182 @@ async function handleOrder(req, res) {
 
   for await (const chunk of req) {
     body += chunk;
+    if (body.length > 20000) {
+      res.writeHead(413);
+      res.end(JSON.stringify({ error: "Request too large" }));
+      return;
+    }
   }
 
   try {
     const order = JSON.parse(body);
-    const username = String(order.username || "Не вказаний");
-    const userId = String(order.userId || "Не отриманий");
 
-    let message = "";
+    if (!XROCKET_API_TOKEN || !SUPABASE_URL || !SUPABASE_KEY) {
+      throw new Error("Payment server is not configured");
+    }
+
+    const user = verifyTelegramInitData(
+      String(order.initData || ""),
+      BOT_TOKEN
+    );
+
+    if (!user || !user.id) {
+      res.writeHead(401);
+      res.end(JSON.stringify({ error: "Telegram verification failed" }));
+      return;
+    }
+
+    const userId = String(user.id);
+    const username = user.username || "Не вказаний";
+
+    let orderType;
+    let stars = null;
+    let months = null;
+    let amount;
+    let description;
 
     if (order.type === "premium") {
-      const premiumPrices = {
-        3: 15,
-        6: 20,
-        12: 34
-      };
+      const premiumPrices = { 3: 15, 6: 20, 12: 34 };
+      months = Number(order.months);
 
-      const months = Number(order.months);
-
-      if (!premiumPrices[months] || !order.userId) {
+      if (!premiumPrices[months]) {
         res.writeHead(400);
         res.end(JSON.stringify({ error: "Invalid Premium order" }));
         return;
       }
 
-      const usernameLabel =
-        username === "Не вказаний" ? username : "@" + username;
-
-      message =
-        "⭐ STARS DROP — TELEGRAM PREMIUM\n" +
-        "☑️ Подключено\n\n" +
-        "👤 Username: " + usernameLabel + "\n" +
-        "🆔 Telegram ID: " + userId + "\n" +
-        "💎 Підписка: " + months + " місяців\n" +
-        "💰 Сума: " + premiumPrices[months].toFixed(2) + " USDT\n" +
-        "👛 Оплата: USDT (TON)";
+      orderType = "premium";
+      amount = premiumPrices[months];
+      description = "STARS DROP — Telegram Premium " + months + " months";
     } else {
-      const stars = Number(order.stars);
+      stars = Number(order.stars);
 
       if (!packages.includes(stars)) {
         res.writeHead(400);
-        res.end(JSON.stringify({ error: "Invalid package" }));
+        res.end(JSON.stringify({ error: "Invalid Stars package" }));
         return;
       }
 
-      message =
-        "⭐ STARS DROP\n\n" +
-        "Выплачено\n\n" +
-        "👤 Username: @" + username + "\n" +
-        "🆔 Telegram ID: " + userId + "\n" +
-        "⭐ Пакет: " + stars + " Stars\n" +
-        "🤑 Сума: " + prices[stars].toFixed(2) + " USDT\n" +
-        "👛 Оплата: USDT (TON)";
+      orderType = "stars";
+      amount = prices[stars];
+      description = "STARS DROP — " + stars + " Telegram Stars";
     }
 
-    const result = await telegram("sendMessage", {
-      chat_id: ADMIN_ID,
-      text: message
+    const clientInvoiceId = "starsdrop_" + randomUUID();
+
+    const invoiceResponse = await fetch(
+      XROCKET_API_BASE + "/api/v1/invoices",
+      {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + XROCKET_API_TOKEN,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          priceAmount: amount.toFixed(2),
+          priceCurrency: "USDT",
+          payCurrencies: ["USDT"],
+          clientInvoiceId,
+          description,
+          expiresIn: 1800000,
+          callback: {
+            callbackUrl: "https://stars-drop-backend.onrender.com/xrocket-webhook",
+            payload: { clientInvoiceId }
+          },
+          data: {
+            orderType,
+            telegramUserId: userId,
+            username,
+            stars,
+            months
+          }
+        })
+      }
+    );
+
+    const invoiceText = await invoiceResponse.text();
+    let invoice;
+
+    try {
+      invoice = JSON.parse(invoiceText);
+    } catch {
+      throw new Error("Invalid xRocket invoice response");
+    }
+
+    if (!invoiceResponse.ok || !invoice.id) {
+      throw new Error("xRocket invoice error: " + invoiceText);
+    }
+
+    const addressResponse = await fetch(
+      XROCKET_API_BASE +
+        "/api/v1/invoices/payments/address?invoiceId=" +
+        encodeURIComponent(invoice.id),
+      {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + XROCKET_API_TOKEN,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ payNetwork: "TRX" })
+      }
+    );
+
+    const addressText = await addressResponse.text();
+    let paymentAddress;
+
+    try {
+      paymentAddress = JSON.parse(addressText);
+    } catch {
+      throw new Error("Invalid xRocket payment address response");
+    }
+
+    if (
+      !addressResponse.ok ||
+      !paymentAddress.address ||
+      paymentAddress.payCurrency !== "USDT" ||
+      paymentAddress.payNetwork !== "TRX"
+    ) {
+      throw new Error("xRocket address error: " + addressText);
+    }
+
+    const paymentUrl =
+      invoice.links?.telegramBotLink ||
+      invoice.links?.telegramMiniAppLink ||
+      invoice.links?.webLink;
+
+    if (!paymentUrl) {
+      throw new Error("xRocket did not return a payment link");
+    }
+
+    await database("xrocket_orders", "POST", {
+      client_invoice_id: clientInvoiceId,
+      xrocket_invoice_id: String(invoice.id),
+      telegram_user_id: userId,
+      username,
+      order_type: orderType,
+      stars,
+      premium_months: months,
+      amount,
+      currency: "USDT",
+      status: "pending",
+      payment_url: paymentUrl,
+      payment_address: paymentAddress.address
     });
 
-    if (!result.ok) {
-      res.writeHead(502);
-      res.end(JSON.stringify({ error: "Telegram error" }));
-      return;
-    }
-
     res.writeHead(200);
-    res.end(JSON.stringify({ success: true }));
+    res.end(JSON.stringify({
+      success: true,
+      paymentUrl,
+      paymentAddress: paymentAddress.address,
+      payCurrency: "USDT",
+      payNetwork: "TRX",
+      expiresAt: paymentAddress.expiresAt
+    }));
 
   } catch (error) {
     console.error("Order error:", error);
-    res.writeHead(400);
-    res.end(JSON.stringify({ error: "Invalid request" }));
+    res.writeHead(500);
+    res.end(JSON.stringify({ error: "Could not create payment invoice" }));
   }
 }
 
@@ -351,6 +460,160 @@ const dailyStars = createDailyStarsHandlers({
   botToken: BOT_TOKEN,
   adminId: ADMIN_ID
 });
+
+
+async function handleXrocketWebhook(req, res) {
+  try {
+    const signature = req.headers["signature"];
+    const version = req.headers["signature-version"];
+    const timestamp = req.headers["signature-timestamp"];
+
+    if (
+      !XROCKET_WEBHOOK_SECRET ||
+      !signature ||
+      version !== "v1" ||
+      !timestamp ||
+      !/^\d+$/.test(timestamp) ||
+      Math.abs(Date.now() - Number(timestamp)) > 300000
+    ) {
+      res.writeHead(401);
+      res.end(JSON.stringify({ error: "Invalid webhook signature headers" }));
+      return;
+    }
+
+    const chunks = [];
+    let size = 0;
+
+    for await (const chunk of req) {
+      size += chunk.length;
+
+      if (size > 100000) {
+        res.writeHead(413);
+        res.end(JSON.stringify({ error: "Webhook too large" }));
+        return;
+      }
+
+      chunks.push(chunk);
+    }
+
+    const rawBody = Buffer.concat(chunks);
+    const expected = createHmac("sha256", XROCKET_WEBHOOK_SECRET)
+      .update(timestamp + "." + rawBody.toString("utf8"))
+      .digest("hex");
+
+    if (!/^[a-fA-F0-9]{64}$/.test(signature)) {
+      res.writeHead(401);
+      res.end(JSON.stringify({ error: "Invalid signature" }));
+      return;
+    }
+
+    const receivedBuffer = Buffer.from(signature, "hex");
+    const expectedBuffer = Buffer.from(expected, "hex");
+
+    if (
+      receivedBuffer.length !== expectedBuffer.length ||
+      !timingSafeEqual(receivedBuffer, expectedBuffer)
+    ) {
+      res.writeHead(401);
+      res.end(JSON.stringify({ error: "Invalid signature" }));
+      return;
+    }
+
+    const event = JSON.parse(rawBody.toString("utf8"));
+
+    if (!event.id || !event.data) {
+      res.writeHead(400);
+      res.end(JSON.stringify({ error: "Invalid webhook event" }));
+      return;
+    }
+
+    const eventType = event.data.event || "";
+    const invoice = event.data.invoice || {};
+    const payment = event.data.payment || {};
+
+    const rpcResponse = await fetch(
+      SUPABASE_URL + "/rest/v1/rpc/process_xrocket_payment",
+      {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: "Bearer " + SUPABASE_KEY,
+          "Content-Type": "application/json",
+          Prefer: "return=representation"
+        },
+        body: JSON.stringify({
+          p_event_id: String(event.id),
+          p_invoice_id: invoice.id ? String(invoice.id) : null,
+          p_client_invoice_id: invoice.clientInvoiceId || null,
+          p_event_type: eventType,
+          p_payload: event
+        })
+      }
+    );
+
+    const rpcText = await rpcResponse.text();
+
+    if (!rpcResponse.ok) {
+      throw new Error("Supabase payment processing failed: " + rpcText);
+    }
+
+    const orders = rpcText ? JSON.parse(rpcText) : [];
+    const order = Array.isArray(orders) ? orders[0] : null;
+
+    if (order) {
+      const escapeHtml = (value) =>
+        String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+
+      const product = order.order_type === "premium"
+        ? "Telegram Premium — " + order.premium_months + " місяців"
+        : order.stars + " Telegram Stars";
+
+      const paidAmount = payment.payAmount || order.amount;
+      const paidCurrency = payment.payCurrency || order.currency;
+
+      const message =
+        "✅ <b>Оплата підтверджена!</b>\n\n" +
+        "📦 <b>Товар:</b> " + escapeHtml(product) + "\n" +
+        "💰 <b>Сума:</b> " + escapeHtml(paidAmount) + " " +
+        escapeHtml(paidCurrency) + "\n" +
+        "👤 <b>Покупець:</b> @" + escapeHtml(order.username || "Не вказаний") + "\n" +
+        "🆔 <b>Telegram ID:</b> <code>" + escapeHtml(order.telegram_user_id) + "</code>\n" +
+        "🧾 <b>Замовлення:</b> <code>" + escapeHtml(order.client_invoice_id) + "</code>\n\n" +
+        "Статус: очікує ручної видачі товару.";
+
+      const telegramResult = await telegram("sendMessage", {
+        chat_id: ADMIN_ID,
+        text: message,
+        parse_mode: "HTML"
+      });
+
+      if (!telegramResult || !telegramResult.ok) {
+        throw new Error("Admin Telegram notification failed");
+      }
+
+      const filter = order.xrocket_invoice_id
+        ? "xrocket_invoice_id=eq." + encodeURIComponent(order.xrocket_invoice_id)
+        : "client_invoice_id=eq." + encodeURIComponent(order.client_invoice_id);
+
+      await database(
+        "xrocket_orders?" + filter + "&admin_notified_at=is.null",
+        "PATCH",
+        { admin_notified_at: new Date().toISOString() }
+      );
+    }
+
+    res.writeHead(200);
+    res.end(JSON.stringify({ ok: true }));
+
+  } catch (error) {
+    console.error("xRocket webhook error:", error.message);
+    res.writeHead(500);
+    res.end(JSON.stringify({ error: "Webhook processing failed" }));
+  }
+}
 
 const server = createServer(async function(req, res) {
 
@@ -380,6 +643,11 @@ const server = createServer(async function(req, res) {
 
     return;
 
+  }
+
+  if (req.method === "POST" && req.url === "/xrocket-webhook") {
+    await handleXrocketWebhook(req, res);
+    return;
   }
 
   if (req.method === "POST" && req.url === "/api/order") {
