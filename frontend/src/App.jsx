@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { TonConnectButton, useTonAddress, useTonWallet, useIsConnectionRestored } from "@tonconnect/ui-react";
+import { TonConnectButton, useTonAddress, useTonWallet, useIsConnectionRestored, useTonConnectUI } from "@tonconnect/ui-react";
 import "./App.css";
 const wallets = {
   USDT: "UQCJyWTilVY1vHFWpHqCBD_DnEuBEGJ4H0itRXiqBSRg9Ozd",
@@ -220,6 +220,7 @@ export default function App() {
   const tonAddress = useTonAddress();
   const tonWallet = useTonWallet();
   const tonConnectionRestored = useIsConnectionRestored();
+  const [tonConnectUI] = useTonConnectUI();
   const [language, setLanguage] = useState("UA");
   const [screen, setScreen] = useState("catalog");
   const [selected, setSelected] = useState(null);
@@ -613,6 +614,7 @@ export default function App() {
                     <p>Гаманець підключено</p>
                     <code>{tonAddress}</code>
                     <p>Підключений гаманець: {tonWallet?.device?.appName || "TON Wallet"}</p>
+                    <p>Підтримка USDT (Jetton): {tonWallet?.device?.features?.some((feature) => feature.name === "SendTransaction" && feature.itemTypes?.includes("jetton")) ? "Так" : "Не підтверджена"}</p>
                   </div>
                 ) : (
                   <p>Підключи TON-гаманець для тестування.</p>
