@@ -745,13 +745,6 @@ export default function App() {
             {t.continue}
 
           </button>
-          <button
-            className="primary-button large"
-            onClick={() => setScreen("ton-test")}
-            style={{ marginTop: "12px" }}
-          >
-            💎 Тест USDT через TON Wallet
-          </button>
 
         </section>
         )}
@@ -776,6 +769,26 @@ export default function App() {
               disabled={sending}
             >
               {sending ? t.sending : "Перейти до оплати"}
+            </button>
+          </div>
+
+          <div className="details-card payment-details" style={{ marginTop: "16px" }}>
+            <h2>💎 TON Wallet</h2>
+            <div className="amount-label">Тестова сума</div>
+            <div className="amount-value">
+              {money(selected.usd)} USDT
+            </div>
+            <div className="network-notice">
+              <span>✓</span> TON Network · ТЕСТ
+            </div>
+            <p className="muted">
+              Тестовий переказ, не оплата Stars.
+            </p>
+            <button
+              className="primary-button large"
+              onClick={() => setScreen("ton-test")}
+            >
+              Тест USDT через TON Wallet
             </button>
           </div>
         </section>
