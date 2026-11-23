@@ -604,6 +604,13 @@ export default function App() {
 
           <div className="ton-connect-panel">
             <h2>Підключення гаманця</h2>
+            {selected && (
+              <div className="ton-wallet-connected">
+                <p>Тестовий пакет: {selected.stars.toLocaleString("en-US")} Stars</p>
+                <strong>{money(selected.usd)} USDT</strong>
+                <p>Тестовий переказ, не оплата Stars.</p>
+              </div>
+            )}
             {!tonConnectionRestored ? (
               <p>Перевіряємо стан гаманця...</p>
             ) : (
@@ -614,6 +621,13 @@ export default function App() {
                     <p>Гаманець підключено</p>
                     <code>{tonAddress}</code>
                     <p>Підключений гаманець: {tonWallet?.device?.appName || "TON Wallet"}</p>
+                    <p>
+                      Мережа: {tonWallet?.account?.chain === "-239"
+                        ? "TON Mainnet"
+                        : tonWallet?.account?.chain === "-3"
+                          ? "TON Testnet"
+                          : "Невідома мережа"}
+                    </p>
                     <pre>{JSON.stringify(tonWallet?.device?.features || [], null, 2)}</pre>
                   </div>
                 ) : (
@@ -730,6 +744,13 @@ export default function App() {
 
             {t.continue}
 
+          </button>
+          <button
+            className="primary-button large"
+            onClick={() => setScreen("ton-test")}
+            style={{ marginTop: "12px" }}
+          >
+            💎 Тест USDT через TON Wallet
           </button>
 
         </section>
