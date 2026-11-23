@@ -2524,3 +2524,76 @@ html, body {
   }
 }
 
+
+/* TON WALLET TEST SCREEN */
+
+.ton-test-screen {
+  padding-top: 18px;
+}
+
+.ton-test-header {
+  text-align: center;
+  padding: 28px 18px;
+  background: linear-gradient(145deg, #343943, #252a33);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.ton-test-header h1 {
+  margin: 12px 0 6px;
+  color: #fff;
+}
+
+.ton-test-header p {
+  color: #c8ccd3;
+  margin: 6px 0 14px;
+}
+
+.ton-test-header small {
+  color: #ffd34e;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.ton-connect-panel {
+  background: #fff;
+  border: 1px solid #e6e8ec;
+  border-radius: 18px;
+  padding: 22px 18px;
+  color: #252a33;
+  text-align: center;
+  box-shadow: 0 5px 18px rgba(0,0,0,0.06);
+}
+
+.ton-connect-panel h2 {
+  margin: 0 0 18px;
+  font-size: 20px;
+}
+
+.ton-connect-panel > p {
+  color: #737985;
+  margin-top: 16px;
+}
+
+.ton-wallet-connected {
+  margin-top: 20px;
+  padding: 14px;
+  background: #f3f5f8;
+  border-radius: 12px;
+  overflow-wrap: anywhere;
+}
+
+.ton-wallet-connected code {
+  display: block;
+  font-size: 12px;
+  margin: 10px 0;
+  color: #343943;
+}
+
+.ton-test-menu-card {
+  background: linear-gradient(145deg, #343943, #252a33);
+  border: 1px solid rgba(255,255,255,0.15);
+}
+

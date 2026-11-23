@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { TonConnectButton, useTonAddress, useTonWallet, useIsConnectionRestored } from "@tonconnect/ui-react";
 import "./App.css";
 const wallets = {
   USDT: "UQCJyWTilVY1vHFWpHqCBD_DnEuBEGJ4H0itRXiqBSRg9Ozd",
@@ -216,6 +217,9 @@ const words = {
   },
 };
 export default function App() {
+  const tonAddress = useTonAddress();
+  const tonWallet = useTonWallet();
+  const tonConnectionRestored = useIsConnectionRestored();
   const [language, setLanguage] = useState("UA");
   const [screen, setScreen] = useState("catalog");
   const [selected, setSelected] = useState(null);
@@ -575,8 +579,48 @@ export default function App() {
               <strong>{t.dailyCard}</strong>
               <small>{t.dailySubtitle}</small>
             </button>
+            <button className="home-menu-card ton-test-menu-card" onClick={() => setScreen("ton-test")}>
+              <span className="home-menu-icon">💎</span>
+              <strong>TON Wallet</strong>
+              <small>Підключення гаманця · ТЕСТ</small>
+            </button>
           </div>
         </>
+      )}
+
+      {screen === "ton-test" && (
+        <section className="content-screen ton-test-screen">
+          <button className="back-button" onClick={() => setScreen("catalog")}>
+            ← {t.back}
+          </button>
+
+          <div className="ton-test-header">
+            <span className="home-menu-icon">💎</span>
+            <h1>TON Wallet</h1>
+            <p>Тестове підключення гаманця</p>
+            <small>ТЕСТОВИЙ РЕЖИМ · Без оплати Stars</small>
+          </div>
+
+          <div className="ton-connect-panel">
+            <h2>Підключення гаманця</h2>
+            {!tonConnectionRestored ? (
+              <p>Перевіряємо стан гаманця...</p>
+            ) : (
+              <>
+                <TonConnectButton />
+                {tonAddress ? (
+                  <div className="ton-wallet-connected">
+                    <p>Гаманець підключено</p>
+                    <code>{tonAddress}</code>
+                    <p>Підключений гаманець: {tonWallet?.device?.appName || "TON Wallet"}</p>
+                  </div>
+                ) : (
+                  <p>Підключи TON-гаманець для тестування.</p>
+                )}
+              </>
+            )}
+          </div>
+        </section>
       )}
 
       {screen === "stars" && (
