@@ -614,7 +614,7 @@ export default function App() {
                     <p>Гаманець підключено</p>
                     <code>{tonAddress}</code>
                     <p>Підключений гаманець: {tonWallet?.device?.appName || "TON Wallet"}</p>
-                    <p>Підтримка USDT (Jetton): {tonWallet?.device?.features?.some((feature) => feature.name === "SendTransaction" && feature.itemTypes?.includes("jetton")) ? "Так" : "Не підтверджена"}</p>
+                    <pre>{JSON.stringify(tonWallet?.device?.features || [], null, 2)}</pre>
                   </div>
                 ) : (
                   <p>Підключи TON-гаманець для тестування.</p>
