@@ -1,3 +1,4 @@
+import { Address, beginCell, toNano } from "@ton/core";
 import { useEffect, useState } from "react";
 import { TonConnectButton, useTonAddress, useTonWallet, useIsConnectionRestored, useTonConnectUI } from "@tonconnect/ui-react";
 import "./App.css";
@@ -221,6 +222,9 @@ export default function App() {
   const tonWallet = useTonWallet();
   const tonConnectionRestored = useIsConnectionRestored();
   const [tonConnectUI] = useTonConnectUI();
+  const [tonTestPayment, setTonTestPayment] = useState(null);
+  const [tonTestLoading, setTonTestLoading] = useState(false);
+  const [tonTestStatus, setTonTestStatus] = useState("");
   const [language, setLanguage] = useState("UA");
   const [screen, setScreen] = useState("catalog");
   const [selected, setSelected] = useState(null);
@@ -281,6 +285,114 @@ export default function App() {
       webApp.openLink(paymentUrl);
     } else {
       window.open(paymentUrl, "_blank");
+    }
+  }
+
+  async function startTonTestPayment() {
+    if (tonTestLoading || !selected || !tonAddress || !tonWallet) return;
+
+    if (tonWallet.account?.chain !== "-239") {
+      alert("Для тесту потрібен TON Mainnet.");
+      return;
+    }
+
+    const initData = window.Telegram?.WebApp?.initData;
+    if (!initData) {
+      alert("Відкрий магазин через Telegram.");
+      return;
+    }
+
+    setTonTestLoading(true);
+    setTonTestStatus("Створюємо тестовий платіж...");
+
+    try {
+      const response = await fetch("/api/ton-test/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          initData,
+          stars: selected.stars,
+          walletAddress: tonAddress
+        })
+      });
+
+      const payment = await response.json();
+      if (!response.ok || !payment.success) {
+        throw new Error(payment.error || "Не вдалося створити тестовий платіж");
+      }
+
+      const payload = beginCell()
+        .storeUint(0xf8a7ea5, 32)
+        .storeUint(BigInt(payment.queryId), 64)
+        .storeCoins(BigInt(Math.round(Number(payment.amountUsdt) * 1000000)))
+        .storeAddress(Address.parse(payment.receiverAddress))
+        .storeAddress(Address.parse(tonAddress))
+        .storeBit(0)
+        .storeCoins(1n)
+        .storeBit(0)
+        .end()
+        .toBoc()
+        .toString("base64");
+
+      setTonTestStatus("Очікуємо підтвердження у TON-гаманці...");
+
+      await tonConnectUI.sendTransaction({
+        validUntil: Math.floor(Date.now() / 1000) + 300,
+        messages: [{
+          address: payment.senderJettonWallet,
+          amount: toNano("0.1").toString(),
+          payload
+        }]
+      });
+
+      setTonTestPayment(payment);
+      setTonTestStatus("Запит на переказ відправлено. Перевір транзакцію кнопкою перевірки.");
+    } catch (error) {
+      console.error("TON test transfer error:", error);
+      setTonTestStatus("");
+      alert(error.message || "Не вдалося відправити тестовий переказ.");
+    } finally {
+      setTonTestLoading(false);
+    }
+  }
+
+  async function verifyTonTestPayment() {
+    if (!tonTestPayment || tonTestLoading) return;
+
+    const initData = window.Telegram?.WebApp?.initData;
+    if (!initData) {
+      alert("Відкрий магазин через Telegram.");
+      return;
+    }
+
+    setTonTestLoading(true);
+    setTonTestStatus("Перевіряємо переказ у блокчейні...");
+
+    try {
+      const response = await fetch("/api/ton-test/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          initData,
+          intentId: tonTestPayment.intentId
+        })
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Помилка перевірки переказу");
+      }
+
+      if (result.status === "verified") {
+        setTonTestStatus("Тестовий переказ підтверджено. Stars не нараховуються.");
+      } else {
+        setTonTestStatus("Переказ ще не знайдено. Зачекай трохи та перевір знову.");
+      }
+    } catch (error) {
+      console.error("TON test verification error:", error);
+      setTonTestStatus(error.message || "Не вдалося перевірити переказ.");
+    } finally {
+      setTonTestLoading(false);
     }
   }
 
@@ -629,6 +741,25 @@ export default function App() {
                           : "Невідома мережа"}
                     </p>
                     <pre>{JSON.stringify(tonWallet?.device?.features || [], null, 2)}</pre>
+                    {selected && (
+                      <button
+                        className="ton-test-action-button"
+                        onClick={startTonTestPayment}
+                        disabled={tonTestLoading || tonWallet?.account?.chain !== "-239"}
+                      >
+                        {tonTestLoading ? "Зачекай..." : `Переказати ${money(selected.usd)} USDT`}
+                      </button>
+                    )}
+                    {tonTestPayment && (
+                      <button
+                        className="ton-test-action-button"
+                        onClick={verifyTonTestPayment}
+                        disabled={tonTestLoading}
+                      >
+                        Перевірити платіж
+                      </button>
+                    )}
+                    {tonTestStatus && <p className="ton-test-status">{tonTestStatus}</p>}
                   </div>
                 ) : (
                   <p>Підключи TON-гаманець для тестування.</p>

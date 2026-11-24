@@ -5,5 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node server.js"
+  },
+  "dependencies": {
+    "@ton/core": "^0.63.1"
   }
 }

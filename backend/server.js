@@ -6,6 +6,7 @@ import {
   verifyTelegramInitData
 } from "./referrals.js";
 import { createDailyStarsHandlers } from "./daily-stars.js";
+import { createTonTestHandlers } from "./ton-test.js";
 try {
   process.loadEnvFile(".env");
 } catch {}
@@ -40,7 +41,7 @@ const prices = {
 const sessions = new Map();
 async function telegram(method, data) {
   const response = await fetch(
-    "https://api.telegram.org/bot" + BOT_TOKEN + "/" + method,
+    "https:" + "/" + "/" + "api.telegram.org/bot" + BOT_TOKEN + "/" + method,
     {
       method: "POST",
       headers: {
@@ -461,6 +462,15 @@ const dailyStars = createDailyStarsHandlers({
   adminId: ADMIN_ID
 });
 
+const tonTest = createTonTestHandlers({
+  database,
+  telegram,
+  botToken: BOT_TOKEN,
+  adminId: ADMIN_ID,
+  supabaseUrl: SUPABASE_URL,
+  supabaseKey: SUPABASE_KEY
+});
+
 
 async function handleXrocketWebhook(req, res) {
   try {
@@ -656,6 +666,16 @@ const server = createServer(async function(req, res) {
 
     return;
 
+  }
+
+  if (req.method === "POST" && req.url === "/api/ton-test/create") {
+    await tonTest.create(req, res);
+    return;
+  }
+
+  if (req.method === "POST" && req.url === "/api/ton-test/verify") {
+    await tonTest.verify(req, res);
+    return;
   }
   if (req.method === "POST" && req.url === "/api/referral") {
     await handleReferral(req, res);
