@@ -936,7 +936,7 @@ export default function App() {
 
             onClick={() => {
 
-              setMethod("USDT");
+              setMethod(null);
 
               setScreen("payment");
 
@@ -956,6 +956,20 @@ export default function App() {
             ← {t.back}
           </button>
           <h1>{t.payment}</h1>
+          <div className="details-card payment-details">
+            <h2>🚀 X Rocket</h2>
+            <div className="amount-label">{t.amount}</div>
+            <div className="amount-value">
+              {money(selected.usd)} USDT
+            </div>
+            <button
+              className="primary-button large"
+              onClick={sendOrder}
+              disabled={sending}
+            >
+              {sending ? "Зачекайте..." : "Оплатити через X Rocket"}
+            </button>
+          </div>
           <div className="details-card payment-details">
             <h2>💎 TON Wallet</h2>
             <div className="amount-label">{t.amount}</div>
