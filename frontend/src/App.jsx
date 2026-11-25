@@ -971,7 +971,7 @@ export default function App() {
             </button>
           </div>
           <div className="details-card payment-details">
-            <h2>💎 TON Wallet</h2>
+            <h2>💎 Wallet</h2>
             <div className="amount-label">{t.amount}</div>
             <div className="amount-value">
               {money(selected.usd)} USDT

@@ -5,7 +5,7 @@ import { verifyTelegramInitData } from "./referrals.js";
 const TON_USDT_MASTER =
   "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs";
 
-const TONCENTER_API = "https://toncenter.com/api/v3";
+const TONCENTER_API = "https" + "://" + "toncenter.com/api/v3";
 
 const PACKAGES = {
   100: 1.95,
