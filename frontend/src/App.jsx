@@ -396,7 +396,7 @@ export default function App() {
 
       const payment = await response.json();
       if (!response.ok || !payment.success) {
-        throw new Error(t.tonTransferError);
+        throw new Error(payment.error || `HTTP ${response.status}: ${t.tonTransferError}`);
       }
 
       const payload = beginCell()
@@ -428,7 +428,7 @@ export default function App() {
     } catch (error) {
       console.error("USDT transfer error:", error);
       setTonTestStatus("");
-      alert(t.tonTransferError);
+      alert(error?.message || t.tonTransferError);
     } finally {
       setTonTestLoading(false);
     }
