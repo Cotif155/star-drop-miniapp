@@ -45,6 +45,31 @@ const words = {
     sending: "Надсилання...",
     success: "Заявку успішно надіслано!",
     error: "Не вдалося надіслати заявку. Спробуй ще раз.",
+    tonMainnetRequired: "Для оплати потрібна основна мережа TON Mainnet.",
+    tonPreparing: "Готуємо оплату USDT...",
+    tonWaitingWallet: "Очікуємо підтвердження у TON-гаманці...",
+    tonTransferSent: "Переказ відправлено з гаманця. Натисни «Я оплатив», щоб повідомити адміністратора.",
+    tonTransferError: "Не вдалося відправити переказ USDT.",
+    tonNotifySending: "Надсилаємо повідомлення адміністратору...",
+    tonNotifySuccess: "Повідомлення надіслано адміністратору. Після ручної перевірки надходження USDT Stars буде видано.",
+    tonNotifyError: "Не вдалося надіслати повідомлення адміністратору.",
+    tonAlreadyNotified: "Повідомлення надіслано",
+    tonTitle: "Оплата USDT",
+    tonSubtitle: "Оплата Telegram Stars через мережу TON",
+    tonConnectTitle: "Підключення гаманця",
+    tonOrder: "Ваше замовлення:",
+    tonNetworkLabel: "Мережа оплати:",
+    tonCheckingWallet: "Перевіряємо стан гаманця...",
+    tonConnected: "Гаманець підключено",
+    tonWalletLabel: "Гаманець:",
+    tonMainnet: "TON Mainnet",
+    tonTestnet: "TON Testnet",
+    tonUnknownNetwork: "Невідома мережа",
+    tonWait: "Зачекай...",
+    tonPayButton: "Оплатити",
+    tonSending: "Надсилаємо...",
+    tonPaid: "Я оплатив",
+    tonWalletRequired: "Підключіть TON-гаманець для оплати USDT.",
     savings: "Економія",
     reference: "Ціна Telegram",
     referral: "Реферальна програма",
@@ -108,6 +133,31 @@ const words = {
     sending: "Отправка...",
     success: "Заявка успешно отправлена!",
     error: "Не удалось отправить заявку. Попробуй ещё раз.",
+    tonMainnetRequired: "Для оплаты нужна основная сеть TON Mainnet.",
+    tonPreparing: "Готовим оплату USDT...",
+    tonWaitingWallet: "Ожидаем подтверждения в TON-кошельке...",
+    tonTransferSent: "Перевод отправлен из кошелька. Нажми «Я оплатил», чтобы сообщить администратору.",
+    tonTransferError: "Не удалось отправить перевод USDT.",
+    tonNotifySending: "Отправляем сообщение администратору...",
+    tonNotifySuccess: "Сообщение отправлено администратору. После ручной проверки поступления USDT будут выданы Stars.",
+    tonNotifyError: "Не удалось отправить сообщение администратору.",
+    tonAlreadyNotified: "Сообщение отправлено",
+    tonTitle: "Оплата USDT",
+    tonSubtitle: "Оплата Telegram Stars через сеть TON",
+    tonConnectTitle: "Подключение кошелька",
+    tonOrder: "Ваш заказ:",
+    tonNetworkLabel: "Сеть оплаты:",
+    tonCheckingWallet: "Проверяем состояние кошелька...",
+    tonConnected: "Кошелек подключен",
+    tonWalletLabel: "Кошелек:",
+    tonMainnet: "TON Mainnet",
+    tonTestnet: "TON Testnet",
+    tonUnknownNetwork: "Неизвестная сеть",
+    tonWait: "Подождите...",
+    tonPayButton: "Оплатить",
+    tonSending: "Отправляем...",
+    tonPaid: "Я оплатил",
+    tonWalletRequired: "Подключите TON-кошелек для оплаты USDT.",
     savings: "Экономия",
     reference: "Цена Telegram",
     referral: "Реферальная программа",
@@ -171,6 +221,31 @@ const words = {
     sending: "Sending...",
     success: "Request sent successfully!",
     error: "Could not send request. Please try again.",
+    tonMainnetRequired: "TON Mainnet is required for payment.",
+    tonPreparing: "Preparing USDT payment...",
+    tonWaitingWallet: "Waiting for confirmation in your TON wallet...",
+    tonTransferSent: "The transfer was sent from your wallet. Tap “I have paid” to notify the administrator.",
+    tonTransferError: "Could not send the USDT transfer.",
+    tonNotifySending: "Sending a notification to the administrator...",
+    tonNotifySuccess: "The administrator has been notified. Stars will be delivered after the USDT receipt is checked manually.",
+    tonNotifyError: "Could not notify the administrator.",
+    tonAlreadyNotified: "Notification sent",
+    tonTitle: "USDT Payment",
+    tonSubtitle: "Pay for Telegram Stars on the TON network",
+    tonConnectTitle: "Connect wallet",
+    tonOrder: "Your order:",
+    tonNetworkLabel: "Payment network:",
+    tonCheckingWallet: "Checking wallet status...",
+    tonConnected: "Wallet connected",
+    tonWalletLabel: "Wallet:",
+    tonMainnet: "TON Mainnet",
+    tonTestnet: "TON Testnet",
+    tonUnknownNetwork: "Unknown network",
+    tonWait: "Please wait...",
+    tonPayButton: "Pay",
+    tonSending: "Sending...",
+    tonPaid: "I have paid",
+    tonWalletRequired: "Connect a TON wallet to pay with USDT.",
     savings: "Savings",
     reference: "Telegram price",
     referral: "Referral program",
@@ -225,6 +300,7 @@ export default function App() {
   const [tonTestPayment, setTonTestPayment] = useState(null);
   const [tonTestLoading, setTonTestLoading] = useState(false);
   const [tonTestStatus, setTonTestStatus] = useState("");
+  const [tonTestNotified, setTonTestNotified] = useState(false);
   const [language, setLanguage] = useState("UA");
   const [screen, setScreen] = useState("catalog");
   const [selected, setSelected] = useState(null);
@@ -292,18 +368,20 @@ export default function App() {
     if (tonTestLoading || !selected || !tonAddress || !tonWallet) return;
 
     if (tonWallet.account?.chain !== "-239") {
-      alert("Для тесту потрібен TON Mainnet.");
+      alert(t.tonMainnetRequired);
       return;
     }
 
     const initData = window.Telegram?.WebApp?.initData;
     if (!initData) {
-      alert("Відкрий магазин через Telegram.");
+      alert(t.telegramRequired);
       return;
     }
 
     setTonTestLoading(true);
-    setTonTestStatus("Створюємо тестовий платіж...");
+    setTonTestNotified(false);
+    setTonTestPayment(null);
+    setTonTestStatus(t.tonPreparing);
 
     try {
       const response = await fetch("/api/ton-test/create", {
@@ -318,7 +396,7 @@ export default function App() {
 
       const payment = await response.json();
       if (!response.ok || !payment.success) {
-        throw new Error(payment.error || "Не вдалося створити тестовий платіж");
+        throw new Error(t.tonTransferError);
       }
 
       const payload = beginCell()
@@ -334,7 +412,7 @@ export default function App() {
         .toBoc()
         .toString("base64");
 
-      setTonTestStatus("Очікуємо підтвердження у TON-гаманці...");
+      setTonTestStatus(t.tonWaitingWallet);
 
       await tonConnectUI.sendTransaction({
         validUntil: Math.floor(Date.now() / 1000) + 300,
@@ -346,51 +424,49 @@ export default function App() {
       });
 
       setTonTestPayment(payment);
-      setTonTestStatus("Запит на переказ відправлено. Перевір транзакцію кнопкою перевірки.");
+      setTonTestStatus(t.tonTransferSent);
     } catch (error) {
-      console.error("TON test transfer error:", error);
+      console.error("USDT transfer error:", error);
       setTonTestStatus("");
-      alert(error.message || "Не вдалося відправити тестовий переказ.");
+      alert(t.tonTransferError);
     } finally {
       setTonTestLoading(false);
     }
   }
 
-  async function verifyTonTestPayment() {
-    if (!tonTestPayment || tonTestLoading) return;
+  async function notifyTonPayment() {
+    if (tonTestNotified || !tonTestPayment || tonTestLoading || !selected || !tonAddress) return;
 
     const initData = window.Telegram?.WebApp?.initData;
     if (!initData) {
-      alert("Відкрий магазин через Telegram.");
+      alert(t.telegramRequired);
       return;
     }
 
     setTonTestLoading(true);
-    setTonTestStatus("Перевіряємо переказ у блокчейні...");
+    setTonTestStatus(t.tonNotifySending);
 
     try {
-      const response = await fetch("/api/ton-test/verify", {
+      const response = await fetch("/api/ton-test/notify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           initData,
-          intentId: tonTestPayment.intentId
+          stars: selected.stars,
+          walletAddress: tonAddress
         })
       });
 
       const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.error || "Помилка перевірки переказу");
+      if (!response.ok || !result.success) {
+        throw new Error(t.tonNotifyError);
       }
 
-      if (result.status === "verified") {
-        setTonTestStatus("Тестовий переказ підтверджено. Stars не нараховуються.");
-      } else {
-        setTonTestStatus("Переказ ще не знайдено. Зачекай трохи та перевір знову.");
-      }
+      setTonTestNotified(true);
+      setTonTestStatus(t.tonNotifySuccess);
     } catch (error) {
-      console.error("TON test verification error:", error);
-      setTonTestStatus(error.message || "Не вдалося перевірити переказ.");
+      console.error("TON payment notification error:", error);
+      setTonTestStatus(t.tonNotifyError);
     } finally {
       setTonTestLoading(false);
     }
@@ -709,60 +785,66 @@ export default function App() {
 
           <div className="ton-test-header">
             <span className="home-menu-icon">💎</span>
-            <h1>TON Wallet</h1>
-            <p>Тестове підключення гаманця</p>
-            <small>ТЕСТОВИЙ РЕЖИМ · Без оплати Stars</small>
+            <h1>{t.tonTitle}</h1>
+            <p>{t.tonSubtitle}</p>
           </div>
 
           <div className="ton-connect-panel">
-            <h2>Підключення гаманця</h2>
+            <h2>{t.tonConnectTitle}</h2>
+
             {selected && (
               <div className="ton-wallet-connected">
-                <p>Тестовий пакет: {selected.stars.toLocaleString("en-US")} Stars</p>
+                <p>{t.tonOrder} {selected.stars.toLocaleString("en-US")} Stars</p>
                 <strong>{money(selected.usd)} USDT</strong>
-                <p>Тестовий переказ, не оплата Stars.</p>
+                <p>{t.tonNetworkLabel} TON</p>
               </div>
             )}
+
             {!tonConnectionRestored ? (
-              <p>Перевіряємо стан гаманця...</p>
+              <p>{t.tonCheckingWallet}</p>
             ) : (
               <>
                 <TonConnectButton />
+
                 {tonAddress ? (
                   <div className="ton-wallet-connected">
-                    <p>Гаманець підключено</p>
+                    <p>{t.tonConnected}</p>
                     <code>{tonAddress}</code>
-                    <p>Підключений гаманець: {tonWallet?.device?.appName || "TON Wallet"}</p>
+                    <p>{t.tonWalletLabel} {tonWallet?.device?.appName || "TON Wallet"}</p>
                     <p>
-                      Мережа: {tonWallet?.account?.chain === "-239"
-                        ? "TON Mainnet"
+                      {t.tonNetworkLabel} {tonWallet?.account?.chain === "-239"
+                        ? t.tonMainnet
                         : tonWallet?.account?.chain === "-3"
-                          ? "TON Testnet"
-                          : "Невідома мережа"}
+                          ? t.tonTestnet
+                          : t.tonUnknownNetwork}
                     </p>
-                    <pre>{JSON.stringify(tonWallet?.device?.features || [], null, 2)}</pre>
-                    {selected && (
+
+                    {selected && !tonTestPayment && (
                       <button
                         className="ton-test-action-button"
                         onClick={startTonTestPayment}
                         disabled={tonTestLoading || tonWallet?.account?.chain !== "-239"}
                       >
-                        {tonTestLoading ? "Зачекай..." : `Переказати ${money(selected.usd)} USDT`}
+                        {tonTestLoading ? t.tonWait : `${t.tonPayButton} ${money(selected.usd)} USDT`}
                       </button>
                     )}
+
                     {tonTestPayment && (
                       <button
                         className="ton-test-action-button"
-                        onClick={verifyTonTestPayment}
-                        disabled={tonTestLoading}
+                        onClick={notifyTonPayment}
+                        disabled={tonTestLoading || tonTestNotified}
                       >
-                        Перевірити платіж
+                        {tonTestNotified ? t.tonAlreadyNotified : tonTestLoading ? t.tonNotifySending : t.tonPaid}
                       </button>
                     )}
-                    {tonTestStatus && <p className="ton-test-status">{tonTestStatus}</p>}
+
+                    {tonTestStatus && (
+                      <p className="ton-test-status">{tonTestStatus}</p>
+                    )}
                   </div>
                 ) : (
-                  <p>Підключи TON-гаманець для тестування.</p>
+                  <p>{t.tonWalletRequired}</p>
                 )}
               </>
             )}
@@ -886,40 +968,20 @@ export default function App() {
           </button>
           <h1>{t.payment}</h1>
           <div className="details-card payment-details">
-            <h2>USDT</h2>
+            <h2>💎 TON Wallet</h2>
             <div className="amount-label">{t.amount}</div>
             <div className="amount-value">
               {money(selected.usd)} USDT
             </div>
             <div className="network-notice">
-              <span>✓</span> USDT — TRON (TRC20)
+              <span>✓</span> USDT · TON Network
             </div>
-            <button
-              className="primary-button large"
-              onClick={sendOrder}
-              disabled={sending}
-            >
-              {sending ? t.sending : "Перейти до оплати"}
-            </button>
-          </div>
-
-          <div className="details-card payment-details" style={{ marginTop: "16px" }}>
-            <h2>💎 TON Wallet</h2>
-            <div className="amount-label">Тестова сума</div>
-            <div className="amount-value">
-              {money(selected.usd)} USDT
-            </div>
-            <div className="network-notice">
-              <span>✓</span> TON Network · ТЕСТ
-            </div>
-            <p className="muted">
-              Тестовий переказ, не оплата Stars.
-            </p>
+            <p className="muted">{t.tonSubtitle}</p>
             <button
               className="primary-button large"
               onClick={() => setScreen("ton-test")}
             >
-              Тест USDT через TON Wallet
+              {t.tonPayButton}
             </button>
           </div>
         </section>

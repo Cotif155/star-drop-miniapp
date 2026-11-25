@@ -673,8 +673,8 @@ const server = createServer(async function(req, res) {
     return;
   }
 
-  if (req.method === "POST" && req.url === "/api/ton-test/verify") {
-    await tonTest.verify(req, res);
+  if (req.method === "POST" && req.url === "/api/ton-test/notify") {
+    await tonTest.notify(req, res);
     return;
   }
   if (req.method === "POST" && req.url === "/api/referral") {

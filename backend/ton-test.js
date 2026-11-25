@@ -1,4 +1,4 @@
-import { randomBytes, randomUUID } from "node:crypto";
+import { randomBytes } from "node:crypto";
 import { Address } from "@ton/core";
 import { verifyTelegramInitData } from "./referrals.js";
 
@@ -50,19 +50,14 @@ function getTonAddress(value) {
   }
 }
 
-function getQueryId() {
-  return randomBytes(6).readUIntBE(0, 6).toString();
-}
-
 export function createTonTestHandlers({
   database,
   telegram,
   botToken,
-  adminId,
-  supabaseUrl,
-  supabaseKey
+  adminId
 }) {
   const apiKey = process.env.TONCENTER_API_KEY;
+
   const receiverAddress = getTonAddress(
     process.env.TON_TEST_RECEIVER_ADDRESS || ""
   );
@@ -82,9 +77,9 @@ export function createTonTestHandlers({
         });
       }
 
-      if (!apiKey || !receiverAddress || !supabaseUrl || !supabaseKey) {
+      if (!apiKey || !receiverAddress) {
         return sendJson(res, 500, {
-          error: "TON test service is not configured"
+          error: "USDT payment service is not configured"
         });
       }
 
@@ -123,15 +118,12 @@ export function createTonTestHandlers({
 
       if (!walletResponse.ok) {
         throw new Error(
-          "TON Center wallet lookup failed: " +
-          walletResponse.status
+          "TON Center wallet lookup failed: " + walletResponse.status
         );
       }
 
       const walletData = await walletResponse.json();
-
-      const jettonWallet =
-        walletData.jetton_wallets?.[0]?.address;
+      const jettonWallet = walletData.jetton_wallets?.[0]?.address;
 
       if (!jettonWallet || !getTonAddress(jettonWallet)) {
         return sendJson(res, 400, {
@@ -139,46 +131,26 @@ export function createTonTestHandlers({
         });
       }
 
-      const queryId = getQueryId();
-      const intentId = randomUUID();
-      const createdAt = new Date();
-      const expiresAt = new Date(
-        createdAt.getTime() + 10 * 60 * 1000
-      );
-
-      await database("ton_test_payments", "POST", {
-        id: intentId,
-        telegram_user_id: String(user.id),
-        wallet_address: walletAddress,
-        stars,
-        amount_usdt: price,
-        status: "pending",
-        query_id: queryId,
-        expires_at: expiresAt.toISOString(),
-        sender_jetton_wallet: getTonAddress(jettonWallet)
-      });
+      const queryId = randomBytes(6).readUIntBE(0, 6).toString();
 
       return sendJson(res, 200, {
         success: true,
-        intentId,
         queryId,
         senderJettonWallet: Address.parse(jettonWallet).toString(),
         receiverAddress: Address.parse(receiverAddress).toString(),
         amountUsdt: price,
-        stars,
-        expiresAt: expiresAt.toISOString()
+        stars
       });
-
     } catch (error) {
-      console.error("TON test create error:", error.message);
+      console.error("TON payment create error:", error.message);
 
       return sendJson(res, 500, {
-        error: "Не вдалося створити тестовий платіж"
+        error: "Не вдалося підготувати USDT-переказ"
       });
     }
   }
 
-  async function verify(req, res) {
+  async function notify(req, res) {
     try {
       const data = await readJson(req);
 
@@ -193,237 +165,69 @@ export function createTonTestHandlers({
         });
       }
 
-      const intentId = String(data.intentId || "");
+      const stars = Number(data.stars);
+      const price = PACKAGES[stars];
 
-      if (!/^[0-9a-f-]{36}$/i.test(intentId)) {
+      if (!price) {
         return sendJson(res, 400, {
-          error: "Неправильний ID платежу"
+          error: "Неправильний пакет Stars"
         });
       }
 
-      const rows = await database(
-        "ton_test_payments?select=*&id=eq." +
-        encodeURIComponent(intentId) +
-        "&telegram_user_id=eq." +
-        encodeURIComponent(String(user.id)) +
-        "&limit=1"
+      const walletAddress = getTonAddress(
+        String(data.walletAddress || "")
       );
 
-      const payment = rows?.[0];
-
-      if (!payment) {
-        return sendJson(res, 404, {
-          error: "Тестовий платіж не знайдено"
-        });
-      }
-
-      if (payment.status === "verified") {
-        return sendJson(res, 200, {
-          success: true,
-          status: "verified",
-          message: "Переказ уже підтверджено"
-        });
-      }
-
-      if (payment.status !== "pending") {
+      if (!walletAddress) {
         return sendJson(res, 400, {
-          error: "Платіж не очікує перевірки"
+          error: "Неправильна адреса TON-гаманця"
         });
       }
 
-      if (Date.now() > new Date(payment.expires_at).getTime()) {
-        await database(
-          "ton_test_payments?id=eq." +
-          encodeURIComponent(intentId) +
-          "&status=eq.pending",
-          "PATCH",
-          { status: "expired" }
-        );
+      const username = String(user.username || "").trim();
 
-        return sendJson(res, 400, {
-          error: "Час тестового платежу минув"
-        });
+      const escapeHtml = (value) =>
+        String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+
+      const message =
+        "🔔 <b>ПОКУПЕЦЬ ПОВІДОМИВ ПРО ОПЛАТУ</b>\n\n" +
+        "📦 <b>Товар:</b> " + stars + " Telegram Stars\n" +
+        "💰 <b>Сума:</b> " + price.toFixed(2) + " USDT\n" +
+        "🌐 <b>Мережа:</b> TON\n" +
+        "👤 <b>Покупець:</b> @" + escapeHtml(username || "Не вказаний") + "\n" +
+        "🆔 <b>Telegram ID:</b> <code>" + escapeHtml(user.id) + "</code>\n" +
+        "👛 <b>Гаманець:</b> <code>" + escapeHtml(walletAddress) + "</code>\n\n" +
+        "Статус: очікує ручної перевірки надходження USDT та видачі Stars.";
+
+      if (!adminId) {
+        throw new Error("ADMIN_ID is not configured");
       }
 
-      const startUtime = Math.floor(
-        new Date(payment.created_at).getTime() / 1000
-      );
-
-      const transfersUrl = new URL(
-        TONCENTER_API + "/jetton/transfers"
-      );
-
-      transfersUrl.searchParams.set(
-        "owner_address",
-        receiverAddress
-      );
-      transfersUrl.searchParams.set(
-        "jetton_master",
-        TON_USDT_MASTER
-      );
-      transfersUrl.searchParams.set("direction", "in");
-      transfersUrl.searchParams.set(
-        "start_utime",
-        String(startUtime)
-      );
-      transfersUrl.searchParams.set("limit", "100");
-      transfersUrl.searchParams.set("sort", "desc");
-
-      const transfersResponse = await fetch(transfersUrl, {
-        headers: {
-          "X-API-Key": apiKey
-        }
+      const telegramResult = await telegram("sendMessage", {
+        chat_id: adminId,
+        text: message,
+        parse_mode: "HTML"
       });
 
-      if (!transfersResponse.ok) {
-        throw new Error(
-          "TON Center transfers lookup failed: " +
-          transfersResponse.status
-        );
-      }
-
-      const transfersData = await transfersResponse.json();
-      const transfers = transfersData.jetton_transfers || [];
-
-      const expectedAmount = String(
-        Math.round(Number(payment.amount_usdt) * 1000000)
-      );
-
-      const expectedQueryId = String(payment.query_id);
-
-      const transfer = transfers.find((item) => {
-        const sourceWallet = getTonAddress(
-          item.source_wallet || ""
-        );
-
-        const destination = getTonAddress(
-          item.destination || ""
-        );
-
-        const master = getTonAddress(
-          item.jetton_master || ""
-        );
-
-        return (
-          String(item.query_id) === expectedQueryId &&
-          String(item.amount) === expectedAmount &&
-          sourceWallet === payment.sender_jetton_wallet &&
-          destination === receiverAddress &&
-          master === getTonAddress(TON_USDT_MASTER) &&
-          item.transaction_aborted === false &&
-          Boolean(item.transaction_hash)
-        );
-      });
-
-      if (!transfer) {
-        return sendJson(res, 200, {
-          success: false,
-          status: "pending",
-          message: "Переказ поки не знайдено в блокчейні"
-        });
-      }
-
-      const updateResponse = await fetch(
-        supabaseUrl +
-        "/rest/v1/ton_test_payments?id=eq." +
-        encodeURIComponent(intentId) +
-        "&status=eq.pending",
-        {
-          method: "PATCH",
-          headers: {
-            apikey: supabaseKey,
-            Authorization: "Bearer " + supabaseKey,
-            "Content-Type": "application/json",
-            Prefer: "return=representation"
-          },
-          body: JSON.stringify({
-            status: "verified",
-            tx_hash: transfer.transaction_hash,
-            verified_at: new Date().toISOString()
-          })
-        }
-      );
-
-      if (!updateResponse.ok) {
-        throw new Error(
-          "Supabase verification update failed: " +
-          updateResponse.status
-        );
-      }
-
-      const updatedRows = await updateResponse.json();
-
-      if (!Array.isArray(updatedRows) || updatedRows.length === 0) {
-        const currentRows = await database(
-          "ton_test_payments?select=status&id=eq." +
-          encodeURIComponent(intentId) +
-          "&telegram_user_id=eq." +
-          encodeURIComponent(String(user.id)) +
-          "&limit=1"
-        );
-        const currentStatus = currentRows?.[0]?.status;
-
-        if (currentStatus === "verified") {
-          return sendJson(res, 200, {
-            success: true,
-            status: "verified",
-            message: "Переказ уже підтверджено"
-          });
-        }
-
-        if (currentStatus === "expired") {
-          return sendJson(res, 400, {
-            error: "Час тестового платежу минув"
-          });
-        }
-
-        return sendJson(res, 409, {
-          error: "Статус тестового платежу змінився. Повтори перевірку."
-        });
-      }
-
-      if (adminId) {
-        const message =
-          "🧪 <b>ТЕСТОВИЙ USDT ПЕРЕКАЗ ПІДТВЕРДЖЕНО</b>\n\n" +
-          "⭐ <b>Пакет:</b> " + payment.stars + " Stars\n" +
-          "💰 <b>Сума:</b> " + payment.amount_usdt + " USDT\n" +
-          "🆔 <b>Telegram ID:</b> <code>" +
-          user.id + "</code>\n" +
-          "👛 <b>Гаманець:</b> <code>" +
-          payment.wallet_address + "</code>\n" +
-          "🔗 <b>Транзакція:</b> <code>" +
-          transfer.transaction_hash + "</code>\n\n" +
-          "Це тестовий переказ. Stars не видаються.";
-
-        try {
-          await telegram("sendMessage", {
-            chat_id: adminId,
-            text: message,
-            parse_mode: "HTML"
-          });
-        } catch (notifyError) {
-          console.error(
-            "TON test admin notification error:",
-            notifyError.message
-          );
-        }
+      if (!telegramResult || !telegramResult.ok) {
+        throw new Error("Admin Telegram notification failed");
       }
 
       return sendJson(res, 200, {
         success: true,
-        status: "verified",
-        transactionHash: transfer.transaction_hash,
-        message: "Тестовий переказ підтверджено"
+        message: "Повідомлення адміністратору надіслано"
       });
-
     } catch (error) {
-      console.error("TON test verify error:", error.message);
+      console.error("TON payment notification error:", error.message);
 
       return sendJson(res, 500, {
-        error: "Не вдалося перевірити тестовий переказ"
+        error: "Не вдалося надіслати повідомлення про оплату"
       });
     }
   }
 
-  return { create, verify };
+  return { create, notify };
 }
