@@ -804,21 +804,9 @@ export default function App() {
               <p>{t.tonCheckingWallet}</p>
             ) : (
               <>
-                <TonConnectButton />
-
                 {tonAddress ? (
                   <div className="ton-wallet-connected">
                     <p>{t.tonConnected}</p>
-                    <code>{tonAddress}</code>
-                    <p>{t.tonWalletLabel} {tonWallet?.device?.appName || "TON Wallet"}</p>
-                    <p>
-                      {t.tonNetworkLabel} {tonWallet?.account?.chain === "-239"
-                        ? t.tonMainnet
-                        : tonWallet?.account?.chain === "-3"
-                          ? t.tonTestnet
-                          : t.tonUnknownNetwork}
-                    </p>
-
                     {selected && !tonTestPayment && (
                       <button
                         className="ton-test-action-button"
@@ -828,7 +816,6 @@ export default function App() {
                         {tonTestLoading ? t.tonWait : `${t.tonPayButton} ${money(selected.usd)} USDT`}
                       </button>
                     )}
-
                     {tonTestPayment && (
                       <button
                         className="ton-test-action-button"
@@ -838,13 +825,15 @@ export default function App() {
                         {tonTestNotified ? t.tonAlreadyNotified : tonTestLoading ? t.tonNotifySending : t.tonPaid}
                       </button>
                     )}
-
                     {tonTestStatus && (
                       <p className="ton-test-status">{tonTestStatus}</p>
                     )}
                   </div>
                 ) : (
-                  <p>{t.tonWalletRequired}</p>
+                  <>
+                    <TonConnectButton />
+                    <p>{t.tonWalletRequired}</p>
+                  </>
                 )}
               </>
             )}
