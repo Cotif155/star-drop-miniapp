@@ -395,6 +395,7 @@ export default function App() {
       });
 
       const payment = await response.json();
+      console.info("[WALLET DEBUG] Create response:", { status: response.status, success: payment.success, hasQueryId: Boolean(payment.queryId), hasSenderJettonWallet: Boolean(payment.senderJettonWallet), hasReceiverAddress: Boolean(payment.receiverAddress) });
       if (!response.ok || !payment.success) {
         throw new Error(payment.error || `HTTP ${response.status}: ${t.tonTransferError}`);
       }
@@ -414,6 +415,7 @@ export default function App() {
 
       setTonTestStatus(t.tonWaitingWallet);
 
+      console.info("[WALLET DEBUG] Starting sendTransaction");
       await tonConnectUI.sendTransaction({
         validUntil: Math.floor(Date.now() / 1000) + 300,
         messages: [{
@@ -423,10 +425,11 @@ export default function App() {
         }]
       });
 
+      console.info("[WALLET DEBUG] sendTransaction completed");
       setTonTestPayment(payment);
       setTonTestStatus(t.tonTransferSent);
     } catch (error) {
-      console.error("USDT transfer error:", error);
+      console.error("[WALLET DEBUG] USDT transfer error:", { name: error?.name, message: error?.message, stack: error?.stack });
       setTonTestStatus("");
       alert(error?.message || t.tonTransferError);
     } finally {
